@@ -70,8 +70,21 @@ namespace SimpleExpenseTracker.Web.Controllers
         [HttpPost]
         public async Task<IActionResult> Register(IFormCollection form)
         {
+            foreach(var f in form)
+            {
+                if (String.IsNullOrEmpty(f.Value))
+                {
+                    ModelState.AddModelError(String.Empty, "You need to fill in all the fields to register.");
+                    return View();
+                }
+
+            }
+
             if(form["Password"].ToString() != form["RepeatPassword"].ToString())
+            {
                 ModelState.AddModelError(String.Empty, "Password does not match.");
+                return View();
+            }
 
             if (_context.Users.FirstOrDefault(u => u.Email == form["Email"].ToString()) == null)
             {

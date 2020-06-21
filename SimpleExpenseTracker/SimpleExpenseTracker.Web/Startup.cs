@@ -48,8 +48,7 @@ namespace SimpleExpenseTracker.Web
 
             app.UseStaticFiles();
 
-            app.UseAuthentication();
-            
+            app.UseAuthentication();            
 
             app.UseRouting();
             app.UseAuthorization();

@@ -8,16 +8,27 @@
                 <div class="card-body p-0">
                     <!-- Nested Row within Card Body -->
                     <div class="row">
-                        <div class="col-lg-6 d-none d-lg-block bg-login-image"></div>
+                        <div class="col-lg-6 d-none d-lg-block bg-login-image">
+                            @*Free image from: https://unsplash.com/photos/DwkgUqRcHrA*@
+                            <img src="~/images/ragdoll.jpg" />
+                        </div>
                         <div class="col-lg-6">
                             <div class="p-5">
                                 <div class="text-center">
-                                    <h1 class="h4 text-gray-900 mb-4">Welcome Back!</h1>
+
+                                    <p class="h1 text-gray-900"><i class="fas fa-comment-dollar"></i></p>
+                                    <h1 class="h4 text-gray-900">
+                                        Simple Expense Tracker
+                                    </h1>
+                                    <p class="mb-lg-4">A simple way to track your expenses!</p>
                                 </div>
                                 @{
                                     if (!Html.ViewData.ModelState.IsValid)
                                     {
-                                        <div class="alert alert-danger">@Html.ValidationSummary()</div>
+                                        <div class="alert alert-danger">
+                                            <p><i class="fas fa-exclamation-triangle"></i> Whoops! Something went wrong:</p>
+                                            @Html.ValidationSummary()
+                                        </div>
                                     }
                                 }
                                 <form class="user" method="post" action="@Url.Action("Login","Auth")">
@@ -49,7 +60,6 @@
                     </div>
                 </div>
             </div>
-
         </div>
     </div>
 
