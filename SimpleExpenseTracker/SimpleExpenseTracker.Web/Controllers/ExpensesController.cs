@@ -27,6 +27,8 @@ namespace SimpleExpenseTracker.Web.Controllers
             var uEmail = User.Claims.FirstOrDefault(x => x.Type == ClaimTypes.NameIdentifier).Value;
             var user = _context.Users.FirstOrDefault(u => u.Email == uEmail);
             var categories = _context.Categories.Where(x => x.AccountId == user.ActiveAccountId).Include("Activities");
+
+            ViewBag.Account = _context.Accounts.Where(x => x.Id == user.ActiveAccountId).Include("Categories").FirstOrDefault();
             return View(categories);
         }
 

@@ -3,11 +3,18 @@
     ViewBag.Title = "Track your budget";
     int m = DateTime.Now.Month;
     int y = DateTime.Now.Year;
+
+    var account = (Domain.Entities.Account)ViewBag.Account;
 }
 
 @{
     if (Model != null && Model.Count() > 0)
     {
+        <div class="col-12">
+            @{ 
+                //if(account.IsOverBudget)
+            }
+        </div>
         <div class="row mt-3">
             @foreach (var c in Model)
             {
@@ -20,16 +27,18 @@
                             <div class="progress">
                                 @{ 
                                     string progressStyle = "bg-success";
+                                    string color = "color:green;";
                                     if(c.IsSpendingMoreThanBudget(m, y))
                                     {
                                         progressStyle = "bg-danger";
+                                        color = ";color:red;";
                                     }
                                 }
-                                <div class="progress-bar @progressStyle" role="progressbar" style="width: @c.GetBudgetPercentLeft(DateTime.Now.Month, DateTime.Now.Year)%" aria-valuenow="@c.GetBudgetPercentLeft(DateTime.Now.Month, DateTime.Now.Year)" aria-valuemin="0" aria-valuemax="100">$@(Convert.ToInt32(c.Budget - c.GetActivitiesSum(DateTime.Now.Month, DateTime.Now.Year)))</div>
+                                <div class="progress-bar @progressStyle" role="progressbar" style="width: @c.GetBudgetPercentLeft(m, y)%@color" aria-valuenow="@c.GetBudgetPercentLeft(DateTime.Now.Month, DateTime.Now.Year)" aria-valuemin="0" aria-valuemax="100">$@(Convert.ToInt32(c.Budget - c.GetActivitiesSum(DateTime.Now.Month, DateTime.Now.Year)))</div>
                             </div>
                             <div class="row">
-                                <div class="col-6 text-left" style="font-size:10px;">
-                                    $@Convert.ToInt32(c.GetActivitiesSum(DateTime.Now.Month, DateTime.Now.Year))
+                                <div class="col-6 text-left" style="font-size:10px;@color">
+                                    $@Convert.ToInt32(c.GetActivitiesSum(m, y))
                                 </div>
                                 <div class="col-6 text-right" style="font-size:10px;">
                                     $@Convert.ToInt32(@c.Budget)

@@ -1,6 +1,7 @@
 ﻿using Domain.Relationships;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 
 namespace Domain.Entities
@@ -11,5 +12,6 @@ namespace Domain.Entities
         public List<Category> Categories { get; set; }
         public User AccountOwner { get; set; }
         public int AccountOwnerId { get; set; }
+
     }
 }

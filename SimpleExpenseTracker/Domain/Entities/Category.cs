@@ -41,8 +41,7 @@ namespace Domain.Entities
 
         public decimal GetDailySpending(int month, int year)
         {
-            int days = DateTime.DaysInMonth(year, month);
-            return GetActivitiesSum(month, year) / days;
+            return GetActivitiesSum(month, year) / DateTime.Now.Day;
         }
 
         public bool IsSpendingMoreThanBudget(int month, int year)
