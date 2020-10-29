@@ -50,7 +50,7 @@ namespace SimpleExpenseTracker.Web.Controllers
 
                     var activeAccount = user.UserAccounts.FirstOrDefault(ua => ua.AccountId == user.ActiveAccountId).Account;
                     if (activeAccount.Categories != null && activeAccount.Categories.Count() > 0)
-                        return RedirectToAction("Register", "Expenses");
+                        return RedirectToAction("Index", "Expenses");
                     else
                         return RedirectToAction("SetUp", "Categories");
                 }
@@ -77,7 +77,6 @@ namespace SimpleExpenseTracker.Web.Controllers
                     ModelState.AddModelError(String.Empty, "You need to fill in all the fields to register.");
                     return View();
                 }
-
             }
 
             if(form["Password"].ToString() != form["RepeatPassword"].ToString())
@@ -155,7 +154,7 @@ namespace SimpleExpenseTracker.Web.Controllers
             var identity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
             var principal = new ClaimsPrincipal(identity);
 
-            await HttpContext.SignInAsync(principal);
+            await HttpContext.SignInAsync(principal);            
         }
 
         private byte[] GenerateSaltedHash(byte[] plainText, byte[] salt)

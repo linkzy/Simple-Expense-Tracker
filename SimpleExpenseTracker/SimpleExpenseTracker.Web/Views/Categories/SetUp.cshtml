@@ -1,0 +1,119 @@
+﻿@model IEnumerable<Domain.Entities.Category>
+
+@{
+    ViewData["Title"] = "Manage Categories";
+}
+    <form method="post" action="@Url.Action("AddCategoryToUserAccount", "Categories")">
+        <div class="col-lg-12">
+            <div class="card shadow mb-4">
+                <div class="card-header py-3">
+                    <h6 class="m-0 font-weight-bold text-primary">Add Categories</h6>
+                </div>
+                <div class="card-body">
+                    <p>Add a few categories to start tracking:</p>
+                    <div class="row">
+                        <div class="col-4">
+                            <label>Icon:</label>
+                            @{
+                                Html.RenderPartial("_fontAwsomeSelect");
+                            }
+                        </div>
+                        <div class="col-5">
+                            <label>Name:</label>
+                            <input type="text" class="form-control" placeholder="Category Name" id="catName" name="catName" />
+                        </div>
+                        <div class="col-3">
+                            <label>Budget:</label>
+                            <input type="number" class="form-control" placeholder="1000" id="catBudget" name="catBudget" />
+                        </div>
+
+                    </div>
+                    <div class="row">
+                        <div class="col-4">
+                            <label>Type:</label>
+                            <select id="catType" name="catType" class="form-control">
+                                <option value="1">Expense</option>
+                                <option value="2">Income</option>
+                            </select>
+                        </div>
+                        <div class="col-8">
+                            <label>&nbsp;</label>
+                            <button class="form-control btn btn-success" type="submit">
+                                Add New
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+
+    <div class="col-lg-12">
+        <div class="card shadow mb-4">
+            <div class="card-header py-3">
+                <h6 class="m-0 font-weight-bold text-primary">Your Categories</h6>
+            </div>
+            <div class="card-body">
+                <p>Remove unused categories:</p>
+                <p class="alert alert-danger">When removing a ctegory, all income and expenses from this category will be lost.</p>
+
+                @{
+                    if (Model != null && Model.Count() > 0)
+                    {
+                        <p class="no-cat" style="display:none;">You haven´t added any categories yet!</p>
+                        <ul class="all-cats">
+                            @foreach (var c in Model)
+                            {
+                                <li>
+                                    <i class="fas @c.CategoryIcon"></i> @c.Name <i class="fas fa-trash"></i>
+                                </li>
+                            }
+                        </ul>
+                    }
+                    else
+                    {
+                        <p class="no-cat">You haven´t added any categories yet!</p>
+                        <ul class="all-cats" style="display:none;">
+                        </ul>
+                    }
+                }
+
+            </div>
+        </div>
+        @{
+            if (Model != null && Model.Count() > 0)
+            {
+                <a href="@Url.Action("Register", "Expenses")" class="form-control btn btn-primary mt-2">Start Tracking!</a>
+            }
+            else
+            {
+                <a href="@Url.Action("Index", "Expenses")" class="form-control btn btn-primary mt-2 disabled">Start Tracking!</a>
+            }
+        }
+        
+    </div>
+
+@section style{    
+    
+}
+
+@section scripts {
+    <script src="~/lib/jquery/jquery.js"></script>
+    <script src="~/lib/selectize.js/js/standalone/selectize.js"></script>
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $('.icos-select').selectize({
+                create: true,
+            });
+
+            $(".selectize-input").click(function () {
+                var i = 1;
+                $(".option").each(function () {                                     
+                    var ico = $(this).html().substr(0, 1);
+                    var code = $(this).html().substr(1);
+                    $(this).html(ico + "<span style='display:none;'>" + code + "</span>");
+                });
+            });
+        });
+    </script>
+}

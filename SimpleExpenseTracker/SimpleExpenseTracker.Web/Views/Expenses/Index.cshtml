@@ -1,0 +1,116 @@
+﻿@model IEnumerable<Domain.Entities.Category>
+@{
+    ViewBag.Title = "Track your budget";
+    int m = DateTime.Now.Month;
+    int y = DateTime.Now.Year;
+}
+
+@{
+    if (Model != null && Model.Count() > 0)
+    {
+        <div class="row mt-3">
+            @foreach (var c in Model)
+            {
+                <div class="col-6">
+                    <div class="card shadow mb-4">
+                        <div class="card-header py-3 text-center">
+                            <h6 class="m-0 font-weight-bold text-primary" style="font-size:30px;"><i class="fas @c.CategoryIcon"></i></h6>
+                        </div>
+                        <div class="card-body text-center">
+                            <div class="progress">
+                                @{ 
+                                    string progressStyle = "bg-success";
+                                    if(c.IsSpendingMoreThanBudget(m, y))
+                                    {
+                                        progressStyle = "bg-danger";
+                                    }
+                                }
+                                <div class="progress-bar @progressStyle" role="progressbar" style="width: @c.GetBudgetPercentLeft(DateTime.Now.Month, DateTime.Now.Year)%" aria-valuenow="@c.GetBudgetPercentLeft(DateTime.Now.Month, DateTime.Now.Year)" aria-valuemin="0" aria-valuemax="100">$@(Convert.ToInt32(c.Budget - c.GetActivitiesSum(DateTime.Now.Month, DateTime.Now.Year)))</div>
+                            </div>
+                            <div class="row">
+                                <div class="col-6 text-left" style="font-size:10px;">
+                                    $@Convert.ToInt32(c.GetActivitiesSum(DateTime.Now.Month, DateTime.Now.Year))
+                                </div>
+                                <div class="col-6 text-right" style="font-size:10px;">
+                                    $@Convert.ToInt32(@c.Budget)
+                                </div>
+                                <hr />
+                                <div class="col-6 text-left">
+                                    <div class="row">
+                                        <div class="col-12">
+                                            $@c.GetIdealDailySpending(m, y).ToString("#.##")
+                                        </div>
+                                        <div class="col-12">
+                                            $@c.GetDailySpending(m, y).ToString("#.##")
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-6">
+                                    $@c.GetProportionalDailySpendingLeft(m, y).ToString("#.##")
+                                </div>
+                                <hr />
+                                <div class="col-6">
+                                    <button class="form-control btn btn-info" type="button">
+                                        <i class="fas fa-history"></i>
+                                    </button>
+                                </div>
+                                <div class="col-6">
+                                    <button class="form-control btn btn-success" type="button" onclick="OpenAddModal(@c.Id)">
+                                        <i class="fas fa-plus"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+
+        <div class="modal modalAddActivity" tabindex="-1" role="dialog">
+            <div class="modal-dialog" role="document">
+                <form action="@Url.Action("AddActivity", "Expenses")" method="post">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title">Add income or expense</h5>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        <div class="modal-body">
+                            <div class="md-content">
+                                <p>How much?</p>
+                                <input type="hidden" id="catId" name="catId" />
+                                <input type="number" id="value" name="value" class="form-control p-3" placeholder="$100" />
+                            </div>
+                            <div class="md-load" style="display:none;">
+                                Loading...
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="submit" class="form-control btn btn-primary" onclick="AddActivity()">Save</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    }
+    else
+    {
+        <a href="@Url.Action("SetUp", "Categories")" class="form-control btn btn-primary mt-2 disabled">Please add categories to track first</a>
+    }
+}
+
+@section scripts{
+    <script type="text/javascript">
+        function OpenAddModal(c) {
+            $('#catId').val(c);
+            $('.modalAddActivity').modal('show')
+        }
+
+        function AddActivity() {
+            $(".md-content").fadeOut(function () {
+                $(".md-load").fadeIn();
+            });
+        }
+    </script>
+}
