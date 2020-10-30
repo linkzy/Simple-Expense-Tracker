@@ -74,7 +74,7 @@
                         }
                         <div class="card-body text-center" style="@bg; min-height:200px;">
                             <div class="progress">
-                                <div class="progress-bar @progressStyle" role="progressbar" style="width: @budgetLeft%;@color" aria-valuenow="@c.GetBudgetPercentLeft(DateTime.Now.Month, DateTime.Now.Year)" aria-valuemin="0" aria-valuemax="100">$@(Convert.ToInt32(c.Budget - c.GetActivitiesSum(DateTime.Now.Month, DateTime.Now.Year)))</div>
+                                <div class="progress-bar @progressStyle" role="progressbar" style="width: @budgetLeft%;@color" aria-valuenow="@c.GetBudgetPercentLeft(m, y)" aria-valuemin="0" aria-valuemax="100">$@(Convert.ToInt32(c.Budget - c.GetActivitiesSum(m, y)))</div>
                             </div>
                             <div class="row">
                                 <div class="col-6 text-left" style="font-size:10px;@color">
@@ -104,9 +104,9 @@
                             </div>
                             <div class="row">
                                 <div class="col-6">
-                                    <button class="form-control btn btn-info" type="button">
+                                    <a class="form-control btn btn-info" href="@Url.Action("ActivityHistory", "Expenses", new { category = c.Id, month = m, y })">
                                         <i class="fas fa-history"></i>
-                                    </button>
+                                    </a>
                                 </div>
                                 <div class="col-6">
                                     <button class="form-control btn btn-success" type="button" onclick="OpenAddModal(@c.Id)">
@@ -137,9 +137,10 @@
                                 <p>How much?</p>
                                 <input type="hidden" id="catId" name="catId" />
                                 <input type="number" id="value" name="value" class="form-control p-3" placeholder="$100" />
+                                <input type="text" id="description" name="description" class="form-control p-3" placeholder="eg. christmas gifts!" />
                             </div>
-                            <div class="md-load" style="display:none;">
-                                Loading...
+                            <div class="md-load text-center p-3" style="display:none;">
+                                <img src="~/images/_loading.gif" />
                             </div>
                         </div>
                         <div class="modal-footer">

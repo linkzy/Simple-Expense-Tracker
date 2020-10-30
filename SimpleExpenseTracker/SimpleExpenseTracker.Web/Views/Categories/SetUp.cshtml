@@ -65,12 +65,13 @@
                             @foreach (var c in Model)
                             {
                                 <li>
-                                    <i class="fas @c.CategoryIcon"></i> @c.Name 
+                                    <i class="fas @c.CategoryIcon"></i> @c.Name - $@c.Budget.ToString("#.##");
                                     <a href="@Url.Action("RemoveCategoryFromUserAccount", "Categories", new { categoryId = c.Id })">
                                         <i class="fas fa-trash"></i>
                                     </a>
                                 </li>
                             }
+                            <li>Total: $@Model.Sum(c => c.Budget).ToString("#.##")</li>
                         </ul>
                     }
                     else

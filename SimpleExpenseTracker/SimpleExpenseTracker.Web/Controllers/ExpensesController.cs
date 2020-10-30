@@ -35,16 +35,33 @@ namespace SimpleExpenseTracker.Web.Controllers
         [HttpPost]
         public IActionResult AddActivity(IFormCollection form)
         {
+            var category = _context.Categories.FirstOrDefault(x => x.Id == Convert.ToInt32(form["catId"]));
             Activity a = new Activity()
             {
                 Value = Convert.ToDecimal(form["value"]),
                 CategoryId = Convert.ToInt32(form["catId"]),
+                Description = !String.IsNullOrEmpty(form["description"]) ? form["description"].ToString() : "Expense on " + category.Name,
                 Date = DateTime.Now,
             };
             _context.Activities.Add(a);
             _context.SaveChanges();
             
             return RedirectToAction("Index");
+        }
+
+        public IActionResult ActivityHistory(int category, int month, int year)
+        {
+            ViewBag.Category = _context.Categories.FirstOrDefault(x => x.Id == category);
+            ViewBag.Date = month + "/" + year;
+            return View(_context.Activities.Where(x => x.CategoryId == category && x.Date.Month == month && x.Date.Year == year));
+        }
+
+        public IActionResult RemoveActivity(int activity)
+        {
+            var a = _context.Activities.FirstOrDefault(x => x.Id == activity);
+            _context.Remove(a);
+            _context.SaveChanges();
+            return RedirectToAction("ActivityHistory", new { category = a.CategoryId, month = a.Date.Month, a.Date.Year });
         }
     }
 }
