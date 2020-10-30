@@ -4,7 +4,7 @@
     ViewData["Title"] = "Manage Categories";
 }
     <form method="post" action="@Url.Action("AddCategoryToUserAccount", "Categories")">
-        <div class="col-lg-12">
+        <div class="col-lg-12  pt-4">
             <div class="card shadow mb-4">
                 <div class="card-header py-3">
                     <h6 class="m-0 font-weight-bold text-primary">Add Categories</h6>
@@ -55,17 +55,20 @@
             </div>
             <div class="card-body">
                 <p>Remove unused categories:</p>
-                <p class="alert alert-danger">When removing a ctegory, all income and expenses from this category will be lost.</p>
+                <p class="alert alert-danger">When removing a category, all income and expenses from this category will be lost.</p>
 
                 @{
                     if (Model != null && Model.Count() > 0)
                     {
                         <p class="no-cat" style="display:none;">You haven´t added any categories yet!</p>
-                        <ul class="all-cats">
+                        <ul class="all-cats" style="list-style:none;padding:0px;">
                             @foreach (var c in Model)
                             {
                                 <li>
-                                    <i class="fas @c.CategoryIcon"></i> @c.Name <i class="fas fa-trash"></i>
+                                    <i class="fas @c.CategoryIcon"></i> @c.Name 
+                                    <a href="@Url.Action("RemoveCategoryFromUserAccount", "Categories", new { categoryId = c.Id })">
+                                        <i class="fas fa-trash"></i>
+                                    </a>
                                 </li>
                             }
                         </ul>
@@ -83,7 +86,7 @@
         @{
             if (Model != null && Model.Count() > 0)
             {
-                <a href="@Url.Action("Register", "Expenses")" class="form-control btn btn-primary mt-2">Start Tracking!</a>
+                <a href="@Url.Action("Index", "Expenses")" class="form-control btn btn-primary mt-2">Start Tracking!</a>
             }
             else
             {

@@ -30,7 +30,9 @@ namespace Domain.Entities
             if (spent == 0)
                 return 100;
             else
-                return 100-Convert.ToInt32(spent * 100  / this.Budget);
+                return 100 - Convert.ToInt32(spent * 100 / this.Budget);
+
+
         }
 
         public decimal GetIdealDailySpending(int month, int year)
@@ -42,6 +44,11 @@ namespace Domain.Entities
         public decimal GetDailySpending(int month, int year)
         {
             return GetActivitiesSum(month, year) / DateTime.Now.Day;
+        }
+
+        public decimal SimulateDailySpending(int day, int month, int year)
+        {
+            return GetActivitiesSum(month, year) / day;
         }
 
         public bool IsSpendingMoreThanBudget(int month, int year)

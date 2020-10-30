@@ -59,14 +59,16 @@ namespace SimpleExpenseTracker.Web.Controllers
             return RedirectToAction("SetUp");
         }
 
-        [HttpPost]
         public IActionResult RemoveCategoryFromUserAccount(int categoryId)
         {
             var c = _context.Categories.FirstOrDefault(x => x.Id == categoryId);
+            var a = _context.Activities.Where(x => x.CategoryId == categoryId);
+            
+            _context.RemoveRange(a);
             _context.Categories.Remove(c);
             _context.SaveChanges();
 
-            return Json(c.Id);
+            return RedirectToAction("SetUp");
         }
     }
 }
