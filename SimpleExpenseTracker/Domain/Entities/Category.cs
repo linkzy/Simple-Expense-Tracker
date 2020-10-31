@@ -16,6 +16,8 @@ namespace Domain.Entities
         public string CategoryIcon { get; set; }
         public CategoryType CategoryType { get; set; }
 
+        private int _day = 2;
+
         public decimal GetActivitiesSum(int month, int year)
         {
             if (this.Activities == null || this.Activities.Count() < 1)
@@ -43,7 +45,7 @@ namespace Domain.Entities
 
         public decimal GetDailySpending(int month, int year)
         {
-            return GetActivitiesSum(month, year) / DateTime.Now.Day;
+            return GetActivitiesSum(month, year) / _day; // DateTime.Now.Day;
         }
 
         public decimal SimulateDailySpending(int day, int month, int year)
@@ -53,14 +55,34 @@ namespace Domain.Entities
 
         public bool IsSpendingMoreThanBudget(int month, int year)
         {
-            return GetIdealDailySpending(month, year) < GetDailySpending(month, year);   
+            return GetDailySpending(month, year) > GetIdealDailySpending(month, year);   
         }
 
         public decimal GetProportionalDailySpendingLeft(int month, int year)
         {
-            int daysLeftInTheMonth = DateTime.DaysInMonth(year, month) - DateTime.Now.Day;
-            int budgetLeft = Convert.ToInt32(this.Budget - GetActivitiesSum(month, year));
-            return budgetLeft / daysLeftInTheMonth;
+            decimal idealSpending = GetIdealDailySpending(month, year);
+            decimal acumulatedBudget = idealSpending * _day;
+            decimal left = acumulatedBudget - GetActivitiesSum(month, year);
+            return left < 0 ? 0 : left;
+        }
+
+        public DateTime WaitUntilDateToSpendAgain(int month, int year)
+        {
+            int days = DateTime.DaysInMonth(year, month);
+            int day = _day;
+
+            decimal totalSpendingSimulation = SimulateDailySpending(day, month, year);
+            decimal idealSepnding = GetIdealDailySpending(month, year);
+
+            while (totalSpendingSimulation > idealSepnding)
+            {
+                if (day > days)
+                    return new DateTime(month == 12 ? year + 1 : year, month == 12 ? 1 : month + 1, 1);
+
+                day++;
+                totalSpendingSimulation = SimulateDailySpending(day, month, year);
+            }
+            return new DateTime(year, month, day);
         }
     }
 

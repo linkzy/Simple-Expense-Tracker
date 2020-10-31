@@ -12,7 +12,8 @@ namespace Domain.Entities
         public List<Category> Categories { get; set; }
         public User AccountOwner { get; set; }
         public int AccountOwnerId { get; set; }
-        
+
+        private int _day = 2;
         public decimal GetTotalIdealDailySpending(int month, int year)
         {
             return this.Categories.Where(x => x.CategoryType == CategoryType.Expense).Sum(c => c.GetIdealDailySpending(month, year));
@@ -41,7 +42,7 @@ namespace Domain.Entities
         public DateTime WaitUntilDateToSpendAgain(int month, int year)
         {
             int days = DateTime.DaysInMonth(year, month);
-            int day = DateTime.Now.Day;
+            int day = _day;// DateTime.Now.Day;
             
             decimal totalSpendingSimulation = this.Categories.Sum(x => x.SimulateDailySpending(day, month, year));
             decimal idealSepnding = GetTotalIdealDailySpending(month, year);

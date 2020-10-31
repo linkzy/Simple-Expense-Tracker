@@ -65,6 +65,7 @@
                                 if (c.IsSpendingMoreThanBudget(m, y))
                                 {
                                     bg = "background-color:#ffe04b";
+                                    progressStyle = "bg-warning";
                                 }
                                 else
                                 {
@@ -88,23 +89,26 @@
                                     @if (c.GetBudgetPercentLeft(m, y) < 1 || account.IsSpendingMoreThanBudget(m, y))
                                     {
                                         <p class="alert alert-danger text-center" style="font-size:16px;"><i class="fas fa-bomb"></i> <strong>$0</strong></p>
-                                    }
-                                    else
-                                    {
-                                        if (c.IsSpendingMoreThanBudget(m, y))
-                                        {
-                                            <p class="alert alert-warning text-center" style="font-size:16px;"><i class="far fa-hand-paper"></i> <strong>$@c.GetProportionalDailySpendingLeft(m, y).ToString("#.##")</strong></p>
                                         }
                                         else
                                         {
-                                            <p class="alert alert-success text-center" style="font-size:16px;"><i class="far fa-thumbs-up"></i> <strong>$@c.GetProportionalDailySpendingLeft(m, y).ToString("#.##")</strong></p>
+                                            if (c.IsSpendingMoreThanBudget(m, y))
+                                            {
+                                                string prop = c.GetProportionalDailySpendingLeft(m, y).ToString("#.##");
+                                                prop = String.IsNullOrEmpty(prop) ? "0" : prop;
+
+                                <p class="alert alert-warning text-center" style="font-size:16px;"><i class="far fa-hand-paper"></i> <strong>$@prop</strong><br /><i class="fas fa-hourglass-half"></i> @c.WaitUntilDateToSpendAgain(m, y).Day/@c.WaitUntilDateToSpendAgain(m, y).Month</p>
+                                            }
+                                            else
+                                            {
+                                                <p class="alert alert-success text-center" style="font-size:16px;"><i class="far fa-thumbs-up"></i> <strong>$@c.GetProportionalDailySpendingLeft(m, y).ToString("#.##")</strong></p>
+                                            }
                                         }
-                                    }
                                 </div>
                             </div>
                             <div class="row">
                                 <div class="col-6">
-                                    <a class="form-control btn btn-info" href="@Url.Action("ActivityHistory", "Expenses", new { category = c.Id, month = m, y })">
+                                    <a class="form-control btn btn-info" href="@Url.Action("ActivityHistory", "Expenses", new { category = c.Id, month = m, year = y })">
                                         <i class="fas fa-history"></i>
                                     </a>
                                 </div>
@@ -119,7 +123,6 @@
                 </div>
             }
         </div>
-        <p class="text-center" style="font-size:12px;">Total spent: $@account.GetTotalSpending(m, y).ToString("#.##") / Total budget: $@account.GetTotalBudget(m, y).ToString("#.##")</p>
         <a href="@Url.Action("Setup", "Categories")" class="form-control btn btn-primary mt-2">Edit Categories</a>
 
         <div class="modal modalAddActivity" tabindex="-1" role="dialog">
@@ -137,6 +140,7 @@
                                 <p>How much?</p>
                                 <input type="hidden" id="catId" name="catId" />
                                 <input type="number" id="value" name="value" class="form-control p-3" placeholder="$100" />
+                                <p class="mt-4">Description:</p>
                                 <input type="text" id="description" name="description" class="form-control p-3" placeholder="eg. christmas gifts!" />
                             </div>
                             <div class="md-load text-center p-3" style="display:none;">
