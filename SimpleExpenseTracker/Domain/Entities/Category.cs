@@ -16,7 +16,7 @@ namespace Domain.Entities
         public string CategoryIcon { get; set; }
         public CategoryType CategoryType { get; set; }
 
-        private int _day = 2;
+        private int _day = DateTime.Now.Day;
 
         public decimal GetActivitiesSum(int month, int year)
         {
