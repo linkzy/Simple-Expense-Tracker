@@ -9,10 +9,15 @@ namespace Domain.Entities
     {
         public int Id { get; set; }
         public string Name { get; set; }
+        
         public decimal Budget { get; set; }
+        public BudgetType BudgetType { get; set; }
+        
         public List<Activity> Activities { get; set; }
-        public Account Account { get; set; }
+        
         public int AccountId { get; set; }
+        public Account Account { get; set; }
+        
         public string CategoryIcon { get; set; }
         public CategoryType CategoryType { get; set; }
 
@@ -33,8 +38,6 @@ namespace Domain.Entities
                 return 100;
             else
                 return 100 - Convert.ToInt32(spent * 100 / this.Budget);
-
-
         }
 
         public decimal GetIdealDailySpending(int month, int year)
@@ -90,5 +93,13 @@ namespace Domain.Entities
     {
         Expense = 1,
         Income = 2
+    }
+
+    public enum BudgetType
+    {
+        NoBudget = 0,
+        Daily = 1,
+        Weekly = 2,
+        Monthly = 3
     }
 }

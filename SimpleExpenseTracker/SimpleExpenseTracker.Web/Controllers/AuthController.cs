@@ -2,12 +2,12 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
-using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
 using Domain.Entities;
 using Domain.Relationships;
 using Infra.Data.EF;
+using Infra.Helpers;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Http;
@@ -36,8 +36,8 @@ namespace SimpleExpenseTracker.Web.Controllers
             if(user != null)
             {
                 byte[] password = Encoding.ASCII.GetBytes(form["Password"].ToString());
-                var passowrdHash = GenerateSaltedHash(password, user.Salt);
-                if(CompareByteArrays(user.PasswordHash, passowrdHash))
+                var passowrdHash = PasswordHelper.GenerateSaltedHash(password, user.Salt);
+                if(PasswordHelper.CompareByteArrays(user.PasswordHash, passowrdHash))
                 {
                     user.UserAccounts = _context.UsersAccounts.Where(ua => ua.UserId == user.Id).ToList();
                     foreach(var ua in user.UserAccounts)
@@ -94,7 +94,7 @@ namespace SimpleExpenseTracker.Web.Controllers
                 {
                     Name = form["Name"].ToString() + form["LastName"].ToString(),
                     Email = form["Email"].ToString(),
-                    PasswordHash = GenerateSaltedHash(password, salt),
+                    PasswordHash = PasswordHelper.GenerateSaltedHash(password, salt),
                     Salt = salt
                 };
                 _context.Users.Add(user);
@@ -157,41 +157,6 @@ namespace SimpleExpenseTracker.Web.Controllers
             await HttpContext.SignInAsync(principal);            
         }
 
-        private byte[] GenerateSaltedHash(byte[] plainText, byte[] salt)
-        {
-            HashAlgorithm algorithm = new SHA256Managed();
-
-            byte[] plainTextWithSaltBytes =
-              new byte[plainText.Length + salt.Length];
-
-            for (int i = 0; i < plainText.Length; i++)
-            {
-                plainTextWithSaltBytes[i] = plainText[i];
-            }
-            for (int i = 0; i < salt.Length; i++)
-            {
-                plainTextWithSaltBytes[plainText.Length + i] = salt[i];
-            }
-
-            return algorithm.ComputeHash(plainTextWithSaltBytes);
-        }
-
-        private bool CompareByteArrays(byte[] array1, byte[] array2)
-        {
-            if (array1.Length != array2.Length)
-            {
-                return false;
-            }
-
-            for (int i = 0; i < array1.Length; i++)
-            {
-                if (array1[i] != array2[i])
-                {
-                    return false;
-                }
-            }
-
-            return true;
-        }
+       
     }
 }

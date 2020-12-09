@@ -14,6 +14,7 @@ namespace Domain.Entities
         public int AccountOwnerId { get; set; }
 
         private int _day = DateTime.Now.Day;
+
         public decimal GetTotalIdealDailySpending(int month, int year)
         {
             return this.Categories.Where(x => x.CategoryType == CategoryType.Expense).Sum(c => c.GetIdealDailySpending(month, year));
