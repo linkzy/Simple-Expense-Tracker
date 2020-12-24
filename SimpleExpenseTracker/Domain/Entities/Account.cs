@@ -56,6 +56,8 @@ namespace Domain.Entities
                 day++;
                 totalSpendingSimulation = this.Categories.Sum(x => x.SimulateDailySpending(day, month, year));
             }
+            if(day > days)
+                return new DateTime(year, month, days);
             return new DateTime(year, month, day);
         }
     }
