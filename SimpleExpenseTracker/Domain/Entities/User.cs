@@ -1,5 +1,4 @@
-﻿using Domain.Relationships;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Text;
 
@@ -12,9 +11,8 @@ namespace Domain.Entities
         public string Email { get; set; }
         public byte[] PasswordHash { get; set; }
         public byte[] Salt { get; set; }
-
-        public int ActiveAccountId { get; set; }
-        public List<UsersAccounts> UserAccounts { get; set; }
-     
+        
+        public int AccountId { get; set; }
+        public Account Account { get; set; }
     }
 }
