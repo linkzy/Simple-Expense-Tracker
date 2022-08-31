@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using SimpleExpenseTracker.Shared;
 
@@ -19,7 +20,7 @@ namespace SimpleExpenseTracker.Server.Controllers
             _logger = logger;
         }
 
-        [HttpGet]
+        [HttpGet, Authorize(Roles = "User")]
         public IEnumerable<WeatherForecast> Get()
         {
             return Enumerable.Range(1, 5).Select(index => new WeatherForecast
