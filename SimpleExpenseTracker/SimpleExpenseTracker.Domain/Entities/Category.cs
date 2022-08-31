@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace SimpleExpenseTracker.Shared
+namespace SimpleExpenseTracker.Domain
 {
     public class Category
     {

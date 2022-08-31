@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace SimpleExpenseTracker.Shared
+namespace SimpleExpenseTracker.Domain
 {
     public class User
     {
@@ -13,8 +13,11 @@ namespace SimpleExpenseTracker.Shared
         public string Email { get; set; } = string.Empty;
         public byte[] PasswordHash { get; set; } = new byte[32];
         public byte[] Salt { get; set; } = new byte[32];
+        public string? VerificationToken { get; set; }
+        public DateTime? VerifiedAt { get; set; }
+        public string? PasswordResetToken { get; set; }
+        public DateTime? ResetTokenExpires { get; set; }
 
-        public int ActiveAccountId { get; set; }
         public Account UserAccount { get; set; }
     }
 }
