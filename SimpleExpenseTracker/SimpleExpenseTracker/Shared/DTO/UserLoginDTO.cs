@@ -7,15 +7,11 @@ using System.Threading.Tasks;
 
 namespace SimpleExpenseTracker.Shared.DTO
 {
-    public class UserDTO
+    public class UserLoginDTO
     {
-        [Required]
-        public string Name { get; set; } = string.Empty;
         [Required, EmailAddress]
         public string Email { get; set; } = string.Empty;
         [Required, MinLength(8)]
         public string Password { get; set; } = String.Empty;
-        [Required, Compare("Password")]
-        public string ConfirmPassword { get; set; } = String.Empty;
     }
 }
