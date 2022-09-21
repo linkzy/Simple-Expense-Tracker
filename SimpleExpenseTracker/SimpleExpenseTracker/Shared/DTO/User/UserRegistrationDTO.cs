@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace SimpleExpenseTracker.Shared.DTO
+namespace SimpleExpenseTracker.Shared.DTO.User
 {
     public class UserRegistrationDTO
     {
@@ -14,8 +14,8 @@ namespace SimpleExpenseTracker.Shared.DTO
         [Required, EmailAddress]
         public string Email { get; set; } = string.Empty;
         [Required, MinLength(8)]
-        public string Password { get; set; } = String.Empty;
+        public string Password { get; set; } = string.Empty;
         [Required, Compare("Password")]
-        public string ConfirmPassword { get; set; } = String.Empty;
+        public string ConfirmPassword { get; set; } = string.Empty;
     }
 }

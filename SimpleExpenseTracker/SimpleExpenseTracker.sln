@@ -13,9 +13,9 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Core", "Core", "{5EC266B8-F
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Web", "Web", "{A14F8B82-3A08-444C-9B7C-F2037B28A9DB}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SimpleExpenseTracker.Domain", "SimpleExpenseTracker.Domain\SimpleExpenseTracker.Domain.csproj", "{4664408A-483D-4129-9EA6-C89524D8E292}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SimpleExpenseTracker.Domain", "SimpleExpenseTracker.Domain\SimpleExpenseTracker.Domain.csproj", "{4664408A-483D-4129-9EA6-C89524D8E292}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SimpleExpenseTracker.Infra", "SimpleExpenseTracker.Infra\SimpleExpenseTracker.Infra.csproj", "{D215B478-5D03-4A78-9E68-554FE915C13D}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SimpleExpenseTracker.Infra", "SimpleExpenseTracker.Infra\SimpleExpenseTracker.Infra.csproj", "{D215B478-5D03-4A78-9E68-554FE915C13D}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

@@ -4,7 +4,7 @@ using Microsoft.IdentityModel.Tokens;
 using SimpleExpenseTracker.Domain;
 using SimpleExpenseTracker.Infra.Helpers;
 using SimpleExpenseTracker.Shared;
-using SimpleExpenseTracker.Shared.DTO;
+using SimpleExpenseTracker.Shared.DTO.User;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
