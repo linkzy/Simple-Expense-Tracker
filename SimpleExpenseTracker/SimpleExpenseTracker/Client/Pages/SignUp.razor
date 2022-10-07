@@ -1,7 +1,43 @@
 ﻿@layout NoAuthLayout
 @page "/signup"
+@inject HttpClient Http
+@inject AuthenticationStateProvider AuthStateProvider
+@inject ILocalStorageService LocalStorage
+@inject NavigationManager NavManager
+
+<EditForm Model="user" OnSubmit="HandleRegistration">
+    <div class="form-group">
+        <label for="name">Name</label>
+        <InputText id="name" @bind-Value="user.Name" class="form-control"></InputText>
+    </div>
+    <div class="form-group">
+        <label for="name">Email</label>
+        <InputText id="email" @bind-Value="user.Email" class="form-control"></InputText>
+    </div>
+    <div class="form-group">
+        <label for="password">Password</label>
+        <InputText type="password" id="password" @bind-Value="user.Password" class="form-control"></InputText>
+    </div>
+    <div class="form-group">
+        <label for="confirmpassword">Confirm Password</label>
+        <InputText type="confirmpassword" id="confirmpassword" @bind-Value="user.ConfirmPassword" class="form-control"></InputText>
+    </div>
+    <button type="submit" class="btn btn-primary">Login</button>
+</EditForm>
 
  
 @code {
+    private UserRegistrationDTO user = new UserRegistrationDTO();
 
+    private async void HandleRegistration()
+    {
+        var result = await Http.PostAsJsonAsync("api/Auth/register", user);
+        if (result.IsSuccessStatusCode)
+        {
+            string token = await result.Content.ReadAsStringAsync();
+            await LocalStorage.SetItemAsStringAsync("token", token);
+            await AuthStateProvider.GetAuthenticationStateAsync();
+            NavManager.NavigateTo("Categories");
+        }
+    }
 }

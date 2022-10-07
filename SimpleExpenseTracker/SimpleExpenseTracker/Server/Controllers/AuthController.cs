@@ -1,10 +1,8 @@
-﻿using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
 using SimpleExpenseTracker.Domain;
 using SimpleExpenseTracker.Infra.Helpers;
-using SimpleExpenseTracker.Shared;
-using SimpleExpenseTracker.Shared.DTO.User;
+using SimpleExpenseTracker.Shared.DTO.UserDTO;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
@@ -69,7 +67,8 @@ namespace SimpleExpenseTracker.Server.Controllers
             List<Claim> claims = new List<Claim>
             {
                 new Claim(ClaimTypes.Name, user.Name),
-                new Claim(ClaimTypes.Role, "User")
+                new Claim(ClaimTypes.Role, "User"),
+                new Claim("UserAccountId", user.UserAccount.Id.ToString()),
             };
             var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(
                 _configuration.GetSection("AppSettings:ApiKey").Value));
