@@ -19,6 +19,24 @@ namespace SimpleExpenseTracker.Server.Controllers
             _context = context;
         }
 
+        // GET: api/Categories/5
+        [HttpGet("{id}")]
+        public async Task<ActionResult<CategoryDTO>> GetCategory(int id)
+        {
+            if (_context.Categories == null)
+                return NotFound();
+
+            var category = await _context.Categories.FindAsync(id);
+
+            if (category == null)
+                return NotFound();
+
+            if (category.AccountId == Convert.ToInt32(User.FindFirstValue("UserAccountId")))
+                return Unauthorized();
+
+            return new CategoryDTO(category);
+        }
+
         // GET: api/Categories
         [HttpGet]
         public async Task<ActionResult<IEnumerable<CategoryDTO>>> GetCategories()
@@ -27,31 +45,38 @@ namespace SimpleExpenseTracker.Server.Controllers
                                         .Where(x => x.AccountId == Convert.ToInt32(User.FindFirstValue("UserAccountId")))
                                         .ToListAsync();
             if (categories == null)
-            {
                 return NotFound();
-            }
+
             return categories.Select(x => new CategoryDTO(x)).ToList();
-        }
+        }        
 
-        // GET: api/Categories/5
-        [HttpGet("{id}")]
-        public async Task<ActionResult<CategoryDTO>> GetCategory(int id)
+        // POST: api/Categories
+        [HttpPost]
+        public async Task<ActionResult<Category>> PostCategory(CreateCategoryDTO category)
         {
-            if (_context.Categories == null)
-            {
-                return NotFound();
-            }
-            var category = await _context.Categories.FindAsync(id);
+            var account = await _context.Accounts.FindAsync(Convert.ToInt32(User.FindFirstValue("UserAccountId")));
+            if (account == null)
+                return Problem("Account not found");
 
-            if (category == null || category.AccountId == Convert.ToInt32(User.FindFirstValue("UserAccountId")))
+            var newCategory = new Category()
             {
-                return NotFound();
-            }
-            return new CategoryDTO(category);
+                Name = category.Name,
+                Budget = category.Budget,
+                BudgetType = (BudgetType)category.BudgetType,
+                CategoryIcon = category.CategoryIcon,
+                CategoryType = (CategoryType)category.CategoryType,
+                Activities = new List<Activity>(),
+                AccountId = account.Id,
+                Account = account
+            };
+
+            _context.Categories.Add(newCategory);
+            await _context.SaveChangesAsync();
+
+            return CreatedAtAction("GetCategory", new { id = newCategory.Id }, newCategory);
         }
 
         // PUT: api/Categories/5
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut]
         public async Task<IActionResult> PutCategory(UpdateCategoryDTO categoryToUpdate)
         {
@@ -82,33 +107,7 @@ namespace SimpleExpenseTracker.Server.Controllers
             }
 
             return NoContent();
-        }
-
-        // POST: api/Categories
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPost]
-        public async Task<ActionResult<Category>> PostCategory(CategoryDTO category)
-        {
-            var account = await _context.Accounts.FindAsync(Convert.ToInt32(User.FindFirstValue("UserAccountId")));
-            if (account == null)
-                return Problem("Account not found");
-
-            _context.Categories.Add(new Category()
-            {
-                Id = category.Id,
-                Name = category.Name,
-                Budget = category.Budget,
-                BudgetType = (BudgetType)category.BudgetType,
-                CategoryIcon = category.CategoryIcon,
-                CategoryType = (CategoryType)category.CategoryType,
-                Activities = new List<Activity>(),
-                AccountId = account.Id,
-                Account = account
-            });
-            await _context.SaveChangesAsync();
-
-            return CreatedAtAction("GetCategory", new { id = category.Id }, category);
-        }
+        }        
 
         // DELETE: api/Categories/5
         [HttpDelete("{id}")]
@@ -125,15 +124,13 @@ namespace SimpleExpenseTracker.Server.Controllers
             if (category.AccountId != userAccount.Id)
                 return Unauthorized();
 
-            _context.Categories.Remove(category);
+            category.IsDeleted = true;
+            category.ChangeDate = DateTime.Now;
+
+            _context.Categories.Update(category);
             await _context.SaveChangesAsync();
 
             return NoContent();
-        }
-
-        private bool CategoryExists(int id)
-        {
-            return (_context.Categories?.Any(e => e.Id == id)).GetValueOrDefault();
         }
     }
 }
