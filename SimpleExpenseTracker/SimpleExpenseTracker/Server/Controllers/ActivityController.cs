@@ -1,58 +1,53 @@
-﻿using System.Security.Claims;
-using Microsoft.AspNetCore.Authorization;
+﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using SimpleExpenseTracker.Domain;
+using SimpleExpenseTracker.Shared.DTO.ActivityDTO;
 using SimpleExpenseTracker.Shared.DTO.CategoryDTO;
+using System.Security.Claims;
 
 namespace SimpleExpenseTracker.Server.Controllers
 {
-    [Authorize]
     [Route("api/[controller]")]
     [ApiController]
-    public class CategoriesController : ControllerBase
+    public class ActivityController : ControllerBase
     {
         private readonly SETContext _context;
 
-        public CategoriesController(SETContext context)
+        public ActivityController(SETContext context)
         {
             _context = context;
         }
 
-        // GET: api/Categories/5
-        [HttpGet("{id}")]
-        public async Task<ActionResult<GetCategoryDTO>> GetCategory(int id)
+        // GET: api/Activity
+        [HttpGet]
+        public async Task<ActionResult<IEnumerable<GetActivityDTO>>> GetActivities(int month, int year, int categoryId)
         {
-            if (_context.Categories == null)
-                return NotFound();
+            var category = await _context.Categories
+                                        .FirstOrDefaultAsync(x =>
+                                                    x.AccountId == Convert.ToInt32(User.FindFirstValue("UserAccountId"))
+                                                    && x.Id == categoryId);                                       
 
-            var category = await _context.Categories.FindAsync(id);
-
+      
             if (category == null)
                 return NotFound();
 
-            if (category.AccountId == Convert.ToInt32(User.FindFirstValue("UserAccountId")))
-                return Unauthorized();
+            var activites = _context.Activities
+                                            .Where(x =>
+                                                        x.CategoryId == categoryId
+                                                        && x.ActivityDate.Year == year
+                                                        && x.ActivityDate.Month == month)
+                                            .ToList();
 
-            return new GetCategoryDTO(category);
-        }
-
-        // GET: api/Categories
-        [HttpGet]
-        public async Task<ActionResult<IEnumerable<GetCategoryDTO>>> GetCategories()
-        {
-            var categories = await _context.Categories
-                                        .Where(x => x.AccountId == Convert.ToInt32(User.FindFirstValue("UserAccountId")))
-                                        .ToListAsync();
-            if (categories == null)
+            if (activites == null)
                 return NotFound();
 
-            return categories.Select(x => new GetCategoryDTO(x)).ToList();
-        }        
+            return activites.Select(x => new GetActivityDTO(x)).ToList();
+        }
 
-        // POST: api/Categories
+        // POST: api/Activity
         [HttpPost]
-        public async Task<ActionResult<GetCategoryDTO>> PostCategory(CreateCategoryDTO category)
+        public async Task<ActionResult<Category>> PostCategory(CreateActivityDTO activity)
         {
             var account = await _context.Accounts.FindAsync(Convert.ToInt32(User.FindFirstValue("UserAccountId")));
             if (account == null)
@@ -85,7 +80,7 @@ namespace SimpleExpenseTracker.Server.Controllers
                 return BadRequest();
 
             var category = await _context.Categories.FindAsync(categoryToUpdate.Id);
-            if (category == null )
+            if (category == null)
                 return NotFound();
 
             if (category.AccountId == Convert.ToInt32(User.FindFirstValue("UserAccountId")))
@@ -109,7 +104,7 @@ namespace SimpleExpenseTracker.Server.Controllers
             }
 
             return NoContent();
-        }        
+        }
 
         // DELETE: api/Categories/5
         [HttpDelete("{id}")]
@@ -118,7 +113,7 @@ namespace SimpleExpenseTracker.Server.Controllers
             var category = await _context.Categories.FindAsync(id);
             if (category == null)
                 return NotFound();
-            
+
             var userAccount = await _context.Accounts.FindAsync(Convert.ToInt32(User.FindFirstValue("UserAccountId")));
             if (userAccount == null)
                 return Problem("Account not found");
