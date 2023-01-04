@@ -14,6 +14,5 @@ namespace SimpleExpenseTracker.Shared.DTO.ActivityDTO
         public DateTime Date { get; set; }
 
         public int CategoryId { get; set; }
-        public ActivityDTO Category { get; set; }
     }
 }

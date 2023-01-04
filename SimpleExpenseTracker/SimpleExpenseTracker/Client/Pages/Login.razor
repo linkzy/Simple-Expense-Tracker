@@ -1,8 +1,9 @@
 ﻿@layout NoAuthLayout
 @page "/login"
 @inject HttpClient Http
-
+@inject AuthenticationStateProvider AuthStateProvider
 @inject ILocalStorageService LocalStorage
+@inject NavigationManager NavManager
 
  <div class="row justify-content-center">
         <div class="col-xl-10 col-lg-12 col-md-9">
@@ -29,37 +30,20 @@
                                     </h1>
                                     <p class="mb-lg-4">A simple way to track your expenses!</p>
                                 </div>
-                                @*@{
-                                    if (!Html.ViewData.ModelState.IsValid)
-                                    {
-                                        <div class="alert alert-danger">
-                                            <p><i class="fas fa-exclamation-triangle"></i> Whoops! Something went wrong:</p>
-                                            @Html.ValidationSummary()
-                                        </div>
-                                    }
-                                }*@
+                              
                                 <EditForm Model="user" OnSubmit="HandleLogin" class="user">
                                     <div class="form-group">
                                         @*<input type="email" class="form-control form-control-user" id="Email" name="Email" aria-describedby="emailHelp" placeholder="Enter Email Address...">*@
                                         <InputText @bind-Value="user.Email" class="form-control form-control-user" placeholder="Enter Email Address..." />
                                     </div>
                                     <div class="form-group">
-                                        <input type="password" class="form-control form-control-user" id="Password" name="Password" placeholder="Password">
-                                    </div>
-                                    <div class="form-group">
-                                        <div class="custom-control custom-checkbox small">
-                                            <input type="checkbox" class="custom-control-input" id="customCheck">
-                                            <label class="custom-control-label" for="customCheck">Remember Me</label>
-                                        </div>
-                                    </div>
+                                        <InputText @bind-Value="user.Password" class="form-control form-control-user" placeholder="Password" />
+                                    </div>    
                                     <button type="submit" class="btn btn-primary btn-user btn-block">
                                         Login
                                     </button>
                                 </EditForm>
-                                <hr>
-                                <div class="text-center">
-                                    <a class="small" href="@*@Url.Action("ForgotPassword", "Auth")*@">Forgot Password?</a>
-                                </div>
+                                <hr />
                                 <div class="text-center">
                                     <a class="small" href="signup">Create an Account</a>
                                 </div>
@@ -74,8 +58,15 @@
 @code {
     UserLoginDTO user = new UserLoginDTO();
 
-    async Task HandleLogin()
+    public async Task HandleLogin()
     {
-        
+        var result = await Http.PostAsJsonAsync("api/Auth/login", user);
+        if (result.IsSuccessStatusCode)
+        {
+            string token = await result.Content.ReadAsStringAsync();
+            await LocalStorage.SetItemAsStringAsync("token", token);
+            await AuthStateProvider.GetAuthenticationStateAsync();
+            NavManager.NavigateTo("Categories");
+        }
     }
 }
