@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace SimpleExpenseTracker.Shared.DTO.CategoryDTO
 {
-    public class CategoryDTO
+    public class GetCategoryDTO
     {
         public int Id { get; set; }
         public string Name { get; set; } = string.Empty;
@@ -20,7 +20,7 @@ namespace SimpleExpenseTracker.Shared.DTO.CategoryDTO
         public string CategoryIcon { get; set; } = string.Empty;
         public CategoryTypeDTO CategoryType { get; set; }
 
-        public CategoryDTO(Category category)
+        public GetCategoryDTO(Category category)
         {
             this.Id = category.Id;
             this.Name = category.Name;

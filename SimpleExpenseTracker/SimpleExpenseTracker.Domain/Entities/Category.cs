@@ -1,4 +1,5 @@
-﻿using System;
+﻿using SimpleExpenseTracker.Domain.Entities;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -6,9 +7,8 @@ using System.Threading.Tasks;
 
 namespace SimpleExpenseTracker.Domain
 {
-    public class Category
+    public class Category : Entity
     {
-        public int Id { get; set; }
         public string Name { get; set; } = string.Empty;
 
         public decimal Budget { get; set; }
@@ -29,7 +29,7 @@ namespace SimpleExpenseTracker.Domain
             if (this.Activities == null || this.Activities.Count() < 1)
                 return 0;
 
-            return this.Activities.Where(x => x.Date.Month == month && x.Date.Year == year).Sum(x => x.Value);
+            return this.Activities.Where(x => x.ActivityDate.Month == month && x.ActivityDate.Year == year).Sum(x => x.Value);
         }
 
         public int GetBudgetPercentLeft(int month, int year)
