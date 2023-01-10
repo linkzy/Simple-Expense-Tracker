@@ -1,5 +1,6 @@
 global using SimpleExpenseTracker.Infra.Data;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using Swashbuckle.AspNetCore.Filters;
@@ -8,11 +9,17 @@ using System.Text;
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
-
 builder.Services.AddControllersWithViews();
 builder.Services.AddRazorPages();
 builder.Services.AddHttpClient();
-builder.Services.AddSqlite<SETContext>("Data Source=set.db", b => b.MigrationsAssembly("SimpleExpenseTracker.Infra"));
+
+// Database
+if (builder.Environment.IsDevelopment())
+    builder.Services.AddSqlite<SETContext>("Data Source=set.db", b => b.MigrationsAssembly("SimpleExpenseTracker.Infra"));
+else
+    builder.Services.AddSqlServer<SETContext>(Environment.GetEnvironmentVariable("ConnectionString"), b => b.MigrationsAssembly("SimpleExpenseTracker.Infra"));
+
+// Swagger auth
 builder.Services.AddSwaggerGen(options =>
 {
     options.AddSecurityDefinition("oauth2", new OpenApiSecurityScheme
@@ -25,6 +32,7 @@ builder.Services.AddSwaggerGen(options =>
     options.OperationFilter<SecurityRequirementsOperationFilter>();
 });
 
+// API JWT
 builder.Services
     .AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(options =>
@@ -59,7 +67,6 @@ else
 app.UseHttpsRedirection();
 
 
-
 app.UseBlazorFrameworkFiles();
 app.UseStaticFiles();
 
@@ -73,13 +80,14 @@ app.MapRazorPages();
 app.MapControllers();
 app.MapFallbackToFile("index.html");
 
+// Automatically Migrate Database on StartUp
 var scopeFactory = app.Services.GetRequiredService<IServiceScopeFactory>();
 using (var scope = scopeFactory.CreateScope())
 {
     var db = scope.ServiceProvider.GetRequiredService<SETContext>();
     if (db.Database.EnsureCreated())
     {
-        //SeedData.Initialize(db);
+        db.Database.Migrate();
     }
 }
 
