@@ -38,7 +38,8 @@ namespace SimpleExpenseTracker.Server.Controllers
                 Name = request.Name,
                 PasswordHash = PasswordHelper.GenerateSaltedHash(password, salt),
                 Salt = salt,
-                UserAccount = new Account()
+                UserAccount = new Account(),
+                UserId = Guid.NewGuid()
             };
 
             _context.Users.Add(newUser);
@@ -68,7 +69,6 @@ namespace SimpleExpenseTracker.Server.Controllers
             {
                 new Claim(ClaimTypes.Name, user.Name),
                 new Claim(ClaimTypes.Role, "User"),
-                new Claim("UserAccountId", user.UserAccount.Id.ToString()),
                 new Claim("UserId", user.UserId.ToString())
             };
             var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(
