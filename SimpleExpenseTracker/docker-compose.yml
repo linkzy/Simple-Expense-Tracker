@@ -1,0 +1,8 @@
+version: '3.4'
+
+services:
+  simpleexpensetracker.server:
+    image: ${DOCKER_REGISTRY-}simpleexpensetrackerserver
+    build:
+      context: .
+      dockerfile: SimpleExpenseTracker/Server/Dockerfile
