@@ -5,9 +5,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace SimpleExpenseTracker.Shared.DTO.CategoryDTO
+namespace SimpleExpenseTracker.Shared.DTO
 {
-    public class GetCategoryDTO
+    public class CategoryDTO
     {
         public int Id { get; set; }
         public string Name { get; set; } = string.Empty;
@@ -20,15 +20,15 @@ namespace SimpleExpenseTracker.Shared.DTO.CategoryDTO
         public string CategoryIcon { get; set; } = string.Empty;
         public CategoryTypeDTO CategoryType { get; set; }
 
-        public GetCategoryDTO(Category category)
+        public CategoryDTO(Category category)
         {
-            this.Id = category.Id;
-            this.Name = category.Name;
-            this.Budget = category.Budget;
-            this.BudgetType = (BudgetTypeDTO)category.BudgetType;
-            this.AccountId = category.AccountId;
-            this.CategoryIcon = category.CategoryIcon;
-            this.CategoryType = (CategoryTypeDTO)category.CategoryType;
+            Id = category.Id;
+            Name = category.Name;
+            Budget = category.Budget;
+            BudgetType = (BudgetTypeDTO)category.BudgetType;
+            AccountId = category.AccountId;
+            CategoryIcon = category.CategoryIcon;
+            CategoryType = (CategoryTypeDTO)category.CategoryType;
         }
     }
 

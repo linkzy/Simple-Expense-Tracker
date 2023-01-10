@@ -1,8 +1,13 @@
 ﻿using SimpleExpenseTracker.Domain;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 
-namespace SimpleExpenseTracker.Shared.DTO.ActivityDTO
+namespace SimpleExpenseTracker.Shared.DTO
 {
-    public class GetActivityDTO
+    public class ActivityDTO
     {
         public int Id { get; set; }
         public decimal Value { get; set; }
@@ -11,7 +16,7 @@ namespace SimpleExpenseTracker.Shared.DTO.ActivityDTO
 
         public int CategoryId { get; set; }
 
-        public GetActivityDTO(Activity activity)
+        public ActivityDTO(Activity activity)
         {
             this.Id = activity.Id;
             this.Value = activity.Value;

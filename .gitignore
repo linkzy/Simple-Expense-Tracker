@@ -350,9 +350,6 @@ MigrationBackup/
 .ionide/
 
 # Development Database
-*.db
-*.db-shm
-*.db-wal
 /SimpleExpenseTracker/SimpleExpenseTracker/Server/set.db
 /SimpleExpenseTracker/SimpleExpenseTracker/Server/set.db-shm
 /SimpleExpenseTracker/SimpleExpenseTracker/Server/set.db-wal

@@ -69,6 +69,7 @@ namespace SimpleExpenseTracker.Server.Controllers
                 new Claim(ClaimTypes.Name, user.Name),
                 new Claim(ClaimTypes.Role, "User"),
                 new Claim("UserAccountId", user.UserAccount.Id.ToString()),
+                new Claim("UserId", user.UserId.ToString())
             };
             var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(
                 _configuration.GetSection("AppSettings:ApiKey").Value));

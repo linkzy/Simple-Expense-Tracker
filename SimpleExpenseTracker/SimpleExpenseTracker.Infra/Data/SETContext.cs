@@ -31,6 +31,7 @@ namespace SimpleExpenseTracker.Infra.Data
             modelBuilder.Entity<User>(entity =>
             {
                 entity.HasIndex(u => u.Email).IsUnique();
+                entity.HasIndex(u => u.UserId).IsUnique();
             });
         }
     }

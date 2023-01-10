@@ -1,7 +1,9 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using SimpleExpenseTracker.Domain;
-using SimpleExpenseTracker.Shared.DTO.ActivityDTO;
+using SimpleExpenseTracker.Shared.DTO;
+using System.Linq;
 using System.Security.Claims;
 
 namespace SimpleExpenseTracker.Server.Controllers
@@ -11,59 +13,35 @@ namespace SimpleExpenseTracker.Server.Controllers
     public class ActivitiesController : ControllerBase
     {
         private readonly SETContext _context;
-
         public ActivitiesController(SETContext context)
         {
-            _context=context;
-        }
-
-        [HttpPost]
-        public async Task<ActionResult<ActivityDTO>> Add(ActivityDTO activityDTO)
-        {
-            var account = await _context.Accounts.FindAsync(Convert.ToInt32(User.FindFirstValue("UserAccountId")));
-            if (account == null)
-                return Problem("Account not found");
-
-            var categories = _context.Categories.Where(x => x.AccountId == account.Id).ToList();
-            if (!categories.Any(x => x.Id == activityDTO.CategoryId))
-                return Problem("Category not found");
-
-            var activity = new Activity()
-            {
-                CategoryId= activityDTO.CategoryId,
-                Value= activityDTO.Value,
-                Description= activityDTO.Description,
-                Date = DateTime.UtcNow
-            };
-            _context.Activities.Add(activity);
-            await _context.SaveChangesAsync();
-
-            activityDTO.Id = activity.Id;
-            return Ok(activityDTO);
+            _context = context;
         }
 
         [HttpGet]
-        public async Task<ActionResult<List<ActivityDTO>>> Get(int categoryId, int month, int year)
+        public ActionResult<IEnumerable<Activity>> Get(int month, int year, int categoryId)
         {
-            var account = await _context.Accounts.FindAsync(Convert.ToInt32(User.FindFirstValue("UserAccountId")));
-            if (account == null)
-                return Problem("Account not found");
+            var user = _context
+                            .Users
+                            .Include(x => x.UserAccount.Categories)
+                            .FirstOrDefault(x => x.UserId == new Guid(User.FindFirstValue("UserId")));
 
-            var categories = _context.Categories.Where(x => x.AccountId == account.Id).ToList();
-            if (!categories.Any(x => x.Id == categoryId))
-                return Problem("Category not found");
+            var category = user.UserAccount.Categories.FirstOrDefault(x => x.Id == categoryId);
 
-            var activities = _context.Activities.Where(
-                x => x.CategoryId == categoryId &&
-                x.Date.Month == month &&
-                x.Date.Year == year
-            ).ToList();
-
-            if (!activities.Any())
+            if (category == null)
                 return NotFound();
 
-            return Ok(activities);
-        }
+            var activites = _context.Activities
+                                            .Where(x =>
+                                                        x.CategoryId == categoryId
+                                                        && x.ActivityDate.Year == year
+                                                        && x.ActivityDate.Month == month)
+                                            .ToList();
 
+            if (activites == null)
+                return NotFound();
+
+            return Ok(activites.Select(x => new ActivityDTO(x)).ToList());
+        }
     }
 }

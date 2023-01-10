@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using SimpleExpenseTracker.Domain;
-using SimpleExpenseTracker.Shared.DTO.CategoryDTO;
+using SimpleExpenseTracker.Shared.DTO;
 
 namespace SimpleExpenseTracker.Server.Controllers
 {
@@ -21,41 +21,45 @@ namespace SimpleExpenseTracker.Server.Controllers
 
         // GET: api/Categories/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<GetCategoryDTO>> GetCategory(int id)
+        public ActionResult<CategoryDTO> GetCategory(int id)
         {
-            if (_context.Categories == null)
-                return NotFound();
+            var user = _context
+                            .Users
+                            .Include(x => x.UserAccount.Categories)
+                            .FirstOrDefault(x => x.UserId == new Guid(User.FindFirstValue("UserId")));                            
 
-            var category = await _context.Categories.FindAsync(id);
-
+            var category = user?.UserAccount?.Categories?.FirstOrDefault(x => x.Id == id);                
             if (category == null)
                 return NotFound();
 
-            if (category.AccountId == Convert.ToInt32(User.FindFirstValue("UserAccountId")))
-                return Unauthorized();
-
-            return new GetCategoryDTO(category);
+            return Ok(new CategoryDTO(category));
         }
 
         // GET: api/Categories
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<GetCategoryDTO>>> GetCategories()
+        public ActionResult<IEnumerable<CategoryDTO>> GetCategories()
         {
-            var categories = await _context.Categories
-                                        .Where(x => x.AccountId == Convert.ToInt32(User.FindFirstValue("UserAccountId")))
-                                        .ToListAsync();
-            if (categories == null)
+            var user = _context
+                            .Users
+                            .Include(x => x.UserAccount.Categories)
+                            .FirstOrDefault(x => x.UserId == new Guid(User.FindFirstValue("UserId")));
+
+            if (user?.UserAccount?.Categories == null)
                 return NotFound();
 
-            return categories.Select(x => new GetCategoryDTO(x)).ToList();
+            return Ok(user.UserAccount.Categories.Select(x => new CategoryDTO(x)).ToList());
         }        
 
-        // POST: api/Categories
+        // POST: api/Categories/
         [HttpPost]
-        public async Task<ActionResult<GetCategoryDTO>> PostCategory(CreateCategoryDTO category)
+        public ActionResult<CategoryDTO> PostCategory(CategoryDTO category)
         {
-            var account = await _context.Accounts.FindAsync(Convert.ToInt32(User.FindFirstValue("UserAccountId")));
-            if (account == null)
+            var user = _context
+                            .Users
+                            .Include(x => x.UserAccount)
+                            .FirstOrDefault(x => x.UserId == new Guid(User.FindFirstValue("UserId")));
+
+            if (user?.UserAccount == null)
                 return Problem("Account not found");
 
             var newCategory = new Category()
@@ -66,30 +70,33 @@ namespace SimpleExpenseTracker.Server.Controllers
                 CategoryIcon = category.CategoryIcon,
                 CategoryType = (CategoryType)category.CategoryType,
                 Activities = new List<Activity>(),
-                AccountId = account.Id,
-                Account = account,
+                AccountId = user.UserAccount.Id,
+                Account = user.UserAccount,
                 CreationDate = DateTime.Now,
             };
 
             _context.Categories.Add(newCategory);
-            await _context.SaveChangesAsync();
+            _context.SaveChanges();
 
             return CreatedAtAction("GetCategory", new { id = newCategory.Id }, newCategory);
         }
 
         // PUT: api/Categories/5
         [HttpPut]
-        public async Task<IActionResult> PutCategory(UpdateCategoryDTO categoryToUpdate)
+        public IActionResult PutCategory(int id, CategoryDTO categoryToUpdate)
         {
+
             if (categoryToUpdate == null || categoryToUpdate.Id < 1)
                 return BadRequest();
 
-            var category = await _context.Categories.FindAsync(categoryToUpdate.Id);
-            if (category == null )
-                return NotFound();
+            var user = _context
+                            .Users
+                            .Include(x => x.UserAccount.Categories)
+                            .FirstOrDefault(x => x.UserId == new Guid(User.FindFirstValue("UserId")));
 
-            if (category.AccountId == Convert.ToInt32(User.FindFirstValue("UserAccountId")))
-                return Unauthorized();
+            var category = user?.UserAccount.Categories.FirstOrDefault(x=> x.Id == id);
+            if (category == null )
+                return BadRequest();
 
             category.Name = categoryToUpdate.Name;
             category.Budget = categoryToUpdate.Budget;
@@ -101,7 +108,7 @@ namespace SimpleExpenseTracker.Server.Controllers
             _context.Entry(category).State = EntityState.Modified;
             try
             {
-                await _context.SaveChangesAsync();
+                _context.SaveChanges();
             }
             catch (DbUpdateConcurrencyException)
             {
@@ -113,26 +120,24 @@ namespace SimpleExpenseTracker.Server.Controllers
 
         // DELETE: api/Categories/5
         [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteCategory(int id)
+        public IActionResult DeleteCategory(int id)
         {
-            var category = await _context.Categories.FindAsync(id);
-            if (category == null)
-                return NotFound();
-            
-            var userAccount = await _context.Accounts.FindAsync(Convert.ToInt32(User.FindFirstValue("UserAccountId")));
-            if (userAccount == null)
-                return Problem("Account not found");
+            var user = _context
+                            .Users
+                            .Include(x => x.UserAccount.Categories)
+                            .FirstOrDefault(x => x.UserId == new Guid(User.FindFirstValue("UserId")));
 
-            if (category.AccountId != userAccount.Id)
-                return Unauthorized();
+            var category = user?.UserAccount.Categories.FirstOrDefault(x => x.Id == id);
+            if (category == null)
+                return NotFound();  
 
             category.IsDeleted = true;
             category.ChangeDate = DateTime.Now;
 
             _context.Categories.Update(category);
-            await _context.SaveChangesAsync();
+            _context.SaveChanges();
 
             return NoContent();
-        }
+        }       
     }
 }
