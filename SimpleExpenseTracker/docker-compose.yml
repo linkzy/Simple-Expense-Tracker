@@ -6,3 +6,6 @@ services:
     build:
       context: .
       dockerfile: SimpleExpenseTracker/Server/Dockerfile
+    environment:
+      - ConnectionString=${ConnectionString}
+      - SecretKey=${SecretKey}

@@ -33,6 +33,12 @@ builder.Services.AddSwaggerGen(options =>
 });
 
 // API JWT
+string secretKey = "";
+if (builder.Environment.IsDevelopment())
+    secretKey = builder.Configuration.GetSection("AppSettings:ApiKey").Value;
+else
+    Environment.GetEnvironmentVariable("SecretKey");
+
 builder.Services
     .AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(options =>
@@ -41,7 +47,7 @@ builder.Services
         {
             ValidateIssuerSigningKey = true,
             IssuerSigningKey = new SymmetricSecurityKey(
-                Encoding.UTF8.GetBytes(builder.Configuration.GetSection("AppSettings:ApiKey").Value)),
+                Encoding.UTF8.GetBytes(secretKey)),
             ValidateIssuer = false,
             ValidateAudience = false,
         };
