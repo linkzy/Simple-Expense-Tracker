@@ -5,11 +5,18 @@
 @inject ILocalStorageService LocalStorage
 @inject NavigationManager NavManager
 
-<EditForm Model="user" OnSubmit="HandleLogin" class="user">
+<EditForm Model="@user" OnValidSubmit="@HandleLogin">
+    <DataAnnotationsValidator />
+    
+    <label for="email">Email</label>
+    <InputText id="email" @bind-Value="user.Email" class="form-control form-control-user" placeholder="Enter Email Address..." />
+    <ValidationMessage For="@(() => user.Email)"></ValidationMessage>
 
-    <InputText @bind-Value="user.Email" class="form-control form-control-user" placeholder="Enter Email Address..." />
-    <InputText @bind-Value="user.Password" class="form-control form-control-user" placeholder="Password" />
+    <label for="password">Password</label>
+    <InputText id="password" @bind-Value="user.Password" class="form-control form-control-user" placeholder="Password" />
+    <ValidationMessage For="@(() => user.Password)"></ValidationMessage>
 
+    <ValidationSummary />
     <button type="submit" class="btn btn-primary btn-user btn-block">
         Login
     </button>
@@ -18,7 +25,7 @@
 <a class="small" href="signup">Create an Account</a>
 
 @code {
-    UserLoginDTO user = new UserLoginDTO();
+    private UserLoginDTO user = new UserLoginDTO();
 
     public async Task HandleLogin()
     {
