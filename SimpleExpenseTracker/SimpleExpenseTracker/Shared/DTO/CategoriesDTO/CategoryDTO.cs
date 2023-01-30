@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace SimpleExpenseTracker.Shared.DTO
+namespace SimpleExpenseTracker.Shared.DTO.CategoriesDTO
 {
     public class CategoryDTO
     {
@@ -20,6 +20,11 @@ namespace SimpleExpenseTracker.Shared.DTO
         public string CategoryIcon { get; set; } = string.Empty;
         public CategoryTypeDTO CategoryType { get; set; }
 
+        public CategoryDTO()
+        {
+
+        }
+
         public CategoryDTO(Category category)
         {
             Id = category.Id;
@@ -30,6 +35,7 @@ namespace SimpleExpenseTracker.Shared.DTO
             CategoryIcon = category.CategoryIcon;
             CategoryType = (CategoryTypeDTO)category.CategoryType;
         }
+
     }
 
     public enum CategoryTypeDTO

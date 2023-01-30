@@ -1,0 +1,45 @@
+﻿@page "/Categories/Manage"
+@inject HttpClient Http
+
+<h5>Add new category:</h5>
+<EditForm Model="@newCategory" OnValidSubmit="@HandleNewCategory">
+
+    <label for="name">Category Name</label>
+    <InputText id="name" @bind-Value="newCategory.Name" class="form-control form-control-user" placeholder="Name" />
+
+    <button type="submit" class="btn btn-primary btn-user btn-block">
+        Save
+    </button>
+</EditForm>
+
+@if (categories != null && categories.Count() > 0)
+{
+    <hr />
+    <h5>Edit existing categories:</h5>
+
+    foreach (var category in categories)
+    {
+        <EditCategory category="@category"></EditCategory>
+    }
+}
+
+
+@code{
+    private List<CategoryDTO> categories = new List<CategoryDTO>();
+    private AddCategoryDTO newCategory = new AddCategoryDTO();    
+
+    protected async override Task OnInitializedAsync()
+    {
+        categories = await Http.GetFromJsonAsync<List<CategoryDTO>>("/api/Categories");
+    }
+
+    public async Task HandleNewCategory()
+    {
+        var result = await Http.PostAsJsonAsync<AddCategoryDTO>("/api/Categories", newCategory);
+        if (result.IsSuccessStatusCode)
+        {
+            CategoryDTO c = await result.Content.ReadFromJsonAsync<CategoryDTO>();
+            categories.Add(c);
+        }
+    }
+}
