@@ -1,0 +1,16 @@
+﻿@inject HttpClient Http
+
+<li @key="category">@category.Name <button @onclick="(async () => await HandleDelete())"><i class="fa fa-trash" aria-hidden="true"></i></button></li>
+
+@code {
+    [Parameter]
+    public CategoryDTO category { get; set; }
+
+    [Parameter]
+    public EventCallback<CategoryDTO> onClickDelete { get; set; }
+
+    protected async Task HandleDelete()
+    {
+        await onClickDelete.InvokeAsync(category);
+    }
+}

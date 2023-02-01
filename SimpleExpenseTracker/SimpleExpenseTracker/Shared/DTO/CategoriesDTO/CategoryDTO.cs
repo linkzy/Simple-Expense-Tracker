@@ -29,7 +29,7 @@ namespace SimpleExpenseTracker.Shared.DTO.CategoriesDTO
         {
             Id = category.Id;
             Name = category.Name;
-            Budget = category.Budget;
+            Budget = Convert.ToDecimal(category.Budget);
             BudgetType = (BudgetTypeDTO)category.BudgetType;
             AccountId = category.AccountId;
             CategoryIcon = category.CategoryIcon;
@@ -46,9 +46,9 @@ namespace SimpleExpenseTracker.Shared.DTO.CategoriesDTO
 
     public enum BudgetTypeDTO
     {
-        NoBudget = 0,
-        Daily = 1,
-        Weekly = 2,
-        Monthly = 3
+        NoBudget = 1,
+        Daily = 2,
+        Weekly = 3,
+        Monthly = 4
     }
 }

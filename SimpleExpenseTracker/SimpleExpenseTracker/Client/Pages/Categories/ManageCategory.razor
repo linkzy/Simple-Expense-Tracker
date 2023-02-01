@@ -1,0 +1,48 @@
+﻿@page "/Categories/Manage"
+@inject HttpClient Http
+
+<AddCategory onClickAddCategory="AddNewCategory"></AddCategory>
+
+@if (categories != null && categories.Count() > 0)
+{
+    <hr />
+    <h5>Edit existing categories:</h5>
+
+    <p>Total Categoires (@categories.Count()):</p>    
+
+    <ul>
+        @foreach (var cat in categories)
+        {
+            <EditCategory category="cat" onClickDelete="DeleteCategory"></EditCategory>
+        }
+    </ul>
+}
+
+@code{
+
+    public List<CategoryDTO> categories = new List<CategoryDTO>();    
+
+    protected async override Task OnInitializedAsync()
+    {
+        categories = await Http.GetFromJsonAsync<List<CategoryDTO>>("/api/Categories");
+    }
+
+    public async Task AddNewCategory(AddCategoryDTO newCategory)
+    {
+        var result = await Http.PostAsJsonAsync<AddCategoryDTO>("/api/Categories", newCategory);
+        if (result.IsSuccessStatusCode)
+        {
+            CategoryDTO c = await result.Content.ReadFromJsonAsync<CategoryDTO>();
+            categories.Add(c);
+        }
+    }
+
+    public async Task DeleteCategory(CategoryDTO category)
+    {
+        var result = await Http.DeleteAsync("/api/Categories/" + category.Id);
+        if (result.IsSuccessStatusCode)
+        {
+            categories.RemoveAll(x => x.Id == category.Id);
+        }   
+    }    
+}

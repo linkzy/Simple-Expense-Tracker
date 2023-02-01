@@ -47,7 +47,7 @@ namespace SimpleExpenseTracker.Server.Controllers
             if (user?.UserAccount?.Categories == null)
                 return NotFound();
 
-            return Ok(user.UserAccount.Categories.Select(x => new CategoryDTO(x)).ToList());
+            return Ok(user.UserAccount.Categories.Where(x => !x.IsDeleted).Select(x => new CategoryDTO(x)).ToList());
         }        
 
         // POST: api/Categories/
@@ -78,7 +78,7 @@ namespace SimpleExpenseTracker.Server.Controllers
             _context.Categories.Add(newCategory);
             _context.SaveChanges();
 
-            return CreatedAtAction("GetCategory", new { id = newCategory.Id }, category);
+            return CreatedAtAction("GetCategory", new { id = newCategory.Id }, new CategoryDTO(newCategory));
         }
 
         // PUT: api/Categories/5
