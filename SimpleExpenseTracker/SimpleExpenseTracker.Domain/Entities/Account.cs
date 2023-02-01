@@ -30,9 +30,9 @@ namespace SimpleExpenseTracker.Domain
             return GetTotalDailySpending(month, year) > GetTotalIdealDailySpending(month, year);
         }
 
-        public decimal GetTotalBudget(int month, int year)
+        public decimal GetTotalBudget()
         {
-            return this.Categories.Where(x => x.CategoryType == CategoryType.Expense).Sum(c => c.Budget);
+            return this.Categories.Where(x => x.CategoryType == CategoryType.Expense).Sum(c => Convert.ToDecimal(c.Budget));
         }
 
         public decimal GetTotalSpending(int month, int year)

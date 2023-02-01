@@ -5,26 +5,30 @@
 @inject ILocalStorageService LocalStorage
 @inject NavigationManager NavManager
 
-<EditForm Model="user" OnSubmit="HandleRegistration">
-    <div class="form-group">
-        <label for="name">Name</label>
-        <InputText id="name" @bind-Value="user.Name" class="form-control"></InputText>
-    </div>
-    <div class="form-group">
-        <label for="name">Email</label>
-        <InputText id="email" @bind-Value="user.Email" class="form-control"></InputText>
-    </div>
-    <div class="form-group">
-        <label for="password">Password</label>
-        <InputText type="password" id="password" @bind-Value="user.Password" class="form-control"></InputText>
-    </div>
-    <div class="form-group">
-        <label for="confirmpassword">Confirm Password</label>
-        <InputText type="password" id="confirmpassword" @bind-Value="user.ConfirmPassword" class="form-control"></InputText>
-    </div>
-    <button type="submit" class="btn btn-primary">Login</button>
+<EditForm Model="@user" OnValidSubmit="@HandleRegistration">
+    <DataAnnotationsValidator />   
+
+    <label for="name">Name</label>
+    <InputText id="name" @bind-Value="user.Name" class="form-control"></InputText>
+    <ValidationMessage For="@(() => user.Name)"></ValidationMessage>
+
+    <label for="name">Email</label>
+    <InputText id="email" @bind-Value="user.Email" class="form-control"></InputText>
+    <ValidationMessage For="@(() => user.Email)"></ValidationMessage>
+
+    <label for="password">Password</label>
+    <InputText type="password" id="password" @bind-Value="user.Password" class="form-control"></InputText>
+    <ValidationMessage For="@(() => user.Password)"></ValidationMessage>
+
+    <label for="confirmpassword">Confirm Password</label>
+    <InputText type="password" id="confirmpassword" @bind-Value="user.ConfirmPassword" class="form-control"></InputText>
+    <ValidationMessage For="@(() => user.ConfirmPassword)"></ValidationMessage>   
+
+    <ValidationSummary />
+    <button type="submit" class="btn btn-primary">Create account</button>    
 </EditForm>
 
+<a class="small" href="/">Login with existing account</a>
  
 @code {
     private UserRegistrationDTO user = new UserRegistrationDTO();
@@ -37,7 +41,7 @@
             string token = await result.Content.ReadAsStringAsync();
             await LocalStorage.SetItemAsStringAsync("token", token);
             await AuthStateProvider.GetAuthenticationStateAsync();
-            NavManager.NavigateTo("Categories");
+            NavManager.NavigateTo("/");
         }
     }
 }

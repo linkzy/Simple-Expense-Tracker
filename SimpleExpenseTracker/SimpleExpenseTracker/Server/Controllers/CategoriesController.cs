@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using SimpleExpenseTracker.Domain;
-using SimpleExpenseTracker.Shared.DTO;
+using SimpleExpenseTracker.Shared.DTO.CategoriesDTO;
 
 namespace SimpleExpenseTracker.Server.Controllers
 {
@@ -47,12 +47,12 @@ namespace SimpleExpenseTracker.Server.Controllers
             if (user?.UserAccount?.Categories == null)
                 return NotFound();
 
-            return Ok(user.UserAccount.Categories.Select(x => new CategoryDTO(x)).ToList());
+            return Ok(user.UserAccount.Categories.Where(x => !x.IsDeleted).Select(x => new CategoryDTO(x)).ToList());
         }        
 
         // POST: api/Categories/
         [HttpPost]
-        public ActionResult<CategoryDTO> PostCategory(CategoryDTO category)
+        public ActionResult<CategoryDTO> PostCategory(AddCategoryDTO category)
         {
             var user = _context
                             .Users
@@ -60,7 +60,7 @@ namespace SimpleExpenseTracker.Server.Controllers
                             .FirstOrDefault(x => x.UserId == new Guid(User.FindFirstValue("UserId")));
 
             if (user?.UserAccount == null)
-                return Problem("Account not found");
+                return BadRequest("Account not found");
 
             var newCategory = new Category()
             {
@@ -78,7 +78,7 @@ namespace SimpleExpenseTracker.Server.Controllers
             _context.Categories.Add(newCategory);
             _context.SaveChanges();
 
-            return CreatedAtAction("GetCategory", new { id = newCategory.Id }, newCategory);
+            return CreatedAtAction("GetCategory", new { id = newCategory.Id }, new CategoryDTO(newCategory));
         }
 
         // PUT: api/Categories/5

@@ -1,9 +1,22 @@
 ﻿@page "/"
+@inject HttpClient Http
 
-<PageTitle>Index</PageTitle>
+@if (categories.Count() > 0)
+{
+    //TODO: List categories
+            <span>list...</span>
+}
+else
+{
+            <p>You need to add a few categories before start using the app.</p>
+            <a href="Categories/Manage" class="btn btn-info">Add Categories</a>
+}
 
-<h1>Hello, world!</h1>
+@code {
+    List<CategoryDTO> categories = new List<CategoryDTO>();
 
-Welcome to your new app.
-
-<SurveyPrompt Title="How is Blazor working for you?" />
+    protected async override Task OnInitializedAsync()
+    {
+        var categories = await Http.GetFromJsonAsync<List<CategoryDTO>>("/api/Categories");
+    }    
+}

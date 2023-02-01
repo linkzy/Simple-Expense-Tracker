@@ -1,0 +1,67 @@
+﻿@inject HttpClient Http
+
+<h5>Add new category:</h5>
+<EditForm Model="@newCategory" OnValidSubmit="(async () => await HandleNewCategory())">
+    <DataAnnotationsValidator />
+
+    <label for="name">Category Name:</label>
+    <InputText id="name" @bind-Value="newCategory.Name" class="form-control" placeholder="Name" />
+    <ValidationMessage For="@(() => newCategory.Name)"></ValidationMessage>
+
+    <label for="categoryType">Category Type:</label>
+    <InputSelect id="categoryType" @bind-Value="@newCategory.CategoryType" class="form-control">
+        <option value="Select" disabled selected>Select</option>
+        @foreach (var type in Enum.GetValues(typeof(CategoryTypeDTO)))
+        {
+            <option value="@type">@type</option>
+        }
+    </InputSelect>
+    <ValidationMessage For="@(() => newCategory.CategoryType)"></ValidationMessage>
+
+    @if(!hideBudgetType)
+    {
+        <label for="budgetType">Budget Type:</label>
+        <InputSelect id="budgetType" @bind-Value="@newCategory.BudgetType" class="form-control">
+            <option value="Select" disabled selected>Select</option>
+            @foreach (var type in Enum.GetValues(typeof(BudgetTypeDTO)))
+            {
+                <option value="@type">@type</option>
+            }
+        </InputSelect>
+        <ValidationMessage For="@(() => newCategory.BudgetType)"></ValidationMessage>
+    }    
+    
+    @if(!hideBudgetAmount)
+    {
+        <label for="budget">Budget:</label>
+        <InputNumber id="budget" @bind-Value="newCategory.Budget" class="form-control" placeholder="Budget" />
+        <ValidationMessage For="@(() => newCategory.Budget)"></ValidationMessage>
+    }
+    
+    @*TODO: Create a "icon picker" component so the user can visualize and chood an icon for the category*@
+    <label for="icon">Category Icon:</label>
+    <InputText id="icon" @bind-Value="newCategory.CategoryIcon" class="form-control" />
+    <ValidationMessage For="@(() => newCategory.CategoryIcon)"></ValidationMessage>
+
+    <button type="submit" class="btn btn-primary btn-user btn-block">
+        <span class="fas fa-save"></span> Add Category
+    </button>
+</EditForm>
+
+@code {
+
+    public AddCategoryDTO newCategory = new AddCategoryDTO() { CategoryIcon = "fa-solid fa-list" };
+
+    [Parameter]
+    public EventCallback<AddCategoryDTO> onClickAddCategory { get; set; }
+
+    protected async Task HandleNewCategory()
+    {
+        await onClickAddCategory.InvokeAsync(newCategory);
+        newCategory = new AddCategoryDTO() { CategoryIcon = "fa-solid fa-list" };
+    }
+
+    private bool hideBudgetType { get { return newCategory.CategoryType != CategoryTypeDTO.Expense ? true : false; } }
+    private bool hideBudgetAmount { get { return (newCategory.BudgetType == null || newCategory.BudgetType == BudgetTypeDTO.NoBudget) ? true : false; } }
+    
+}

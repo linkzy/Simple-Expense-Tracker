@@ -10,10 +10,10 @@
 
             <main>
                 <div class="top-row px-4">
-                    <a href="https://docs.microsoft.com/aspnet/" target="_blank">About</a>
+                    <a href="about">About</a>
                 </div>
 
-                <article class="content px-4">
+                <article class="">
                     @Body
                 </article>
             </main>
@@ -32,7 +32,7 @@
     {
         base.OnInitialized();
         var user = (await AuthSate).User;
-        if (!user.Identity.IsAuthenticated)
+        if (user.Identity == null || !user.Identity.IsAuthenticated)
         {
             NavManager.NavigateTo("Login");
         }

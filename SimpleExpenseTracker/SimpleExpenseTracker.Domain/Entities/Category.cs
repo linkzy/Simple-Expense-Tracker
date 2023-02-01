@@ -11,8 +11,8 @@ namespace SimpleExpenseTracker.Domain
     {
         public string Name { get; set; } = string.Empty;
 
-        public decimal Budget { get; set; }
-        public BudgetType BudgetType { get; set; }
+        public decimal? Budget { get; set; }
+        public BudgetType? BudgetType { get; set; }
 
         public List<Activity>? Activities { get; set; }
 
@@ -44,7 +44,7 @@ namespace SimpleExpenseTracker.Domain
         public decimal GetIdealDailySpending(int month, int year)
         {
             int days = DateTime.DaysInMonth(year, month);
-            return this.Budget / days;
+            return (decimal)this.Budget / days;
         }
 
         public decimal GetDailySpending(int month, int year)
@@ -98,9 +98,9 @@ namespace SimpleExpenseTracker.Domain
 
     public enum BudgetType
     {
-        NoBudget = 0,
-        Daily = 1,
-        Weekly = 2,
-        Monthly = 3
+        NoBudget = 1,
+        Daily = 2,
+        Weekly = 3,
+        Monthly = 4
     }
 }
