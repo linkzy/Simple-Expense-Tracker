@@ -50,7 +50,7 @@
 
 @code {
 
-    public AddCategoryDTO newCategory = new AddCategoryDTO() { CategoryIcon = "fa-solid fa-list" };
+    public AddCategoryDTO newCategory = new AddCategoryDTO() { CategoryIcon = "fas fa-money-check-alt" };
 
     [Parameter]
     public EventCallback<AddCategoryDTO> onClickAddCategory { get; set; }
@@ -58,7 +58,7 @@
     protected async Task HandleNewCategory()
     {
         await onClickAddCategory.InvokeAsync(newCategory);
-        newCategory = new AddCategoryDTO() { CategoryIcon = "fa-solid fa-list" };
+        newCategory = new AddCategoryDTO() { CategoryIcon = "fas fa-money-check-alt" };
     }
 
     private bool hideBudgetType { get { return newCategory.CategoryType != CategoryTypeDTO.Expense ? true : false; } }

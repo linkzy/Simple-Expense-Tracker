@@ -1,6 +1,7 @@
 ﻿using SimpleExpenseTracker.Domain;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -10,16 +11,25 @@ namespace SimpleExpenseTracker.Shared.DTO.CategoriesDTO
     public class CategoryDTO
     {
         public int Id { get; set; }
+        
+        [Required]
         public string Name { get; set; } = string.Empty;
 
-        public decimal Budget { get; set; }
+        [Required]
+        [CategoryTypeMustBeSet]
+        public CategoryTypeDTO CategoryType { get; set; }
+        
+        [RequiredIfCategoryTypeIsExpense]
         public BudgetTypeDTO BudgetType { get; set; }
+        
+        [RequiredIfBudgetTypeIsSet]
+        public decimal Budget { get; set; }
+
+        [Required]
+        public string CategoryIcon { get; set; } = string.Empty;
 
         public int AccountId { get; set; }
-
-        public string CategoryIcon { get; set; } = string.Empty;
-        public CategoryTypeDTO CategoryType { get; set; }
-
+        
         public CategoryDTO()
         {
 

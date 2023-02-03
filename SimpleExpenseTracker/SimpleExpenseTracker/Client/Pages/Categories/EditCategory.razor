@@ -1,6 +1,69 @@
 ﻿@inject HttpClient Http
 
-<li @key="category">@category.Name <button @onclick="(async () => await HandleDelete())"><i class="fa fa-trash" aria-hidden="true"></i></button></li>
+<li @key="category">
+    <div class="row">
+        <div class="col"><i class="@category.CategoryIcon" aria-hidden="true"></i></div>
+        <div class="col">@category.Name</div>
+        <div class="col">@category.CategoryType</div>
+        <div class="col">@category.Budget</div>
+        <div class="col"><button @onclick="(async () => clickEdit = true)"><i class="fa fa-edit" aria-hidden="true"></i></button></div>
+        <div class="col"><button @onclick="(async () => await HandleDelete())"><i class="fa fa-trash" aria-hidden="true"></i></button></div>
+    </div>
+    @if (clickEdit)
+    {
+        <EditForm Model="category" OnValidSubmit="(async () => await HandleEditCategory())" @onreset="(async () => clickEdit = false)">
+            
+            <DataAnnotationsValidator />
+
+            <label for="name">Category Name:</label>
+            <InputText id="name" @bind-Value="category.Name" class="form-control" placeholder="Name" />
+            <ValidationMessage For="@(() => category.Name)"></ValidationMessage>
+
+            <label for="categoryType">Category Type:</label>
+            <InputSelect id="categoryType" @bind-Value="@category.CategoryType" class="form-control">
+                <option value="Select" disabled selected>Select</option>
+                @foreach (var type in Enum.GetValues(typeof(CategoryTypeDTO)))
+                {
+                    <option value="@type">@type</option>
+                }
+            </InputSelect>
+            <ValidationMessage For="@(() => category.CategoryType)"></ValidationMessage>
+
+            @if(!hideBudgetType)
+            {
+                <label for="budgetType">Budget Type:</label>
+                <InputSelect id="budgetType" @bind-Value="@category.BudgetType" class="form-control">
+                    <option value="Select" disabled selected>Select</option>
+                    @foreach (var type in Enum.GetValues(typeof(BudgetTypeDTO)))
+                    {
+                        <option value="@type">@type</option>
+                    }
+                </InputSelect>
+                <ValidationMessage For="@(() => category.BudgetType)"></ValidationMessage>
+            }    
+            
+            @if(!hideBudgetAmount)
+            {
+                <label for="budget">Budget:</label>
+                <InputNumber id="budget" @bind-Value="category.Budget" class="form-control" placeholder="Budget" />
+                <ValidationMessage For="@(() => category.Budget)"></ValidationMessage>
+            }
+    
+            @*TODO: Create a "icon picker" component so the user can visualize and chood an icon for the category*@
+            <label for="icon">Category Icon:</label>
+            <InputText id="icon" @bind-Value="category.CategoryIcon" class="form-control" />
+            <ValidationMessage For="@(() => category.CategoryIcon)"></ValidationMessage>
+
+            <button type="submit" class="btn btn-primary btn-user btn-block">
+                <span class="fas fa-save"></span> Save Category
+            </button>
+
+            <button type="reset" class="btn btn-primary btn-user btn-block">
+                <span class="fas fa-ban"></span> Cancel
+            </button>
+        </EditForm>
+    }
+</li>
 
 @code {
     [Parameter]
@@ -13,4 +76,15 @@
     {
         await onClickDelete.InvokeAsync(category);
     }
+
+    private bool clickEdit = false;
+    protected async Task HandleEditCategory()
+    {
+        var result = await Http.PutAsJsonAsync<CategoryDTO>($"/api/Categores/{category.Id}", category);
+        if (result.IsSuccessStatusCode)
+            clickEdit = false;
+    }
+
+    private bool hideBudgetType { get { return category.CategoryType != CategoryTypeDTO.Expense ? true : false; } }
+    private bool hideBudgetAmount { get { return (category.BudgetType == null || category.BudgetType == BudgetTypeDTO.NoBudget) ? true : false; } }
 }
