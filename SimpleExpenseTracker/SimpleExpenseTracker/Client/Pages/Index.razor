@@ -1,22 +1,45 @@
 ﻿@page "/"
 @inject HttpClient Http
 
-@if (categories.Count() > 0)
+@if (categories != null && categories.Count() > 0)
 {
-    //TODO: List categories
-            <span>list...</span>
+    <div class="row">
+        @foreach(var category in categories)
+        {
+            <div class="col"@onclick="() => { Modal?.Open(); }">
+                <div class="card text-white bg-primary mb-3" style="max-width: 18rem;">
+                  <div class="card-header">@category.Name</div>
+                  <div class="card-body">
+                        <i class="@category.CategoryIcon" aria-hidden="true"></i>
+                  </div>
+                </div>
+            </div>
+        }
+    </div>
+    <SimpleExpenseTracker.Client.Pages.Expenses.ExpenseModal @ref="Modal" onClickAddActivity="AddNewActivity" />
 }
 else
 {
-            <p>You need to add a few categories before start using the app.</p>
-            <a href="Categories/Manage" class="btn btn-info">Add Categories</a>
+    <p>You need to add a few categories before start using the app.</p>
+    <a href="Categories/Manage" class="btn btn-info">Add Categories</a>
 }
 
+
 @code {
-    List<CategoryDTO> categories = new List<CategoryDTO>();
+    private Expenses.ExpenseModal? Modal { get; set; }
+    private List<CategoryDTO>? categories = new List<CategoryDTO>();
 
     protected async override Task OnInitializedAsync()
     {
-        var categories = await Http.GetFromJsonAsync<List<CategoryDTO>>("/api/Categories");
+        categories = await Http.GetFromJsonAsync<List<CategoryDTO>>("/api/Categories");
     }    
+
+    public async Task AddNewActivity(ActivityDTO activity)
+    {
+        var result = await Http.PostAsJsonAsync<ActivityDTO>("/api/Activities", activity);
+        if (result.IsSuccessStatusCode)
+        {
+            Modal?.Close();
+        }
+    }
 }

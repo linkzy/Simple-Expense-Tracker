@@ -16,6 +16,11 @@ namespace SimpleExpenseTracker.Shared.DTO
 
         public int CategoryId { get; set; }
 
+        public ActivityDTO()
+        {
+
+        }
+
         public ActivityDTO(Activity activity)
         {
             this.Id = activity.Id;
