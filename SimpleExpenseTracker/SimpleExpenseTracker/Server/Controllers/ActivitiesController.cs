@@ -69,6 +69,7 @@ namespace SimpleExpenseTracker.Server.Controllers
                 CreationDate = DateTime.UtcNow
             };
 
+
             _context.Activities.Add(newActivity);
             _context.SaveChangesAsync();
 
