@@ -6,11 +6,13 @@
     <div class="row">
         @foreach(var category in categories)
         {
-            <div class="col"@onclick="() => { Modal?.Open(); }">
+            <div class="col"@onclick="() => { Modal?.Open(category); }">
                 <div class="card text-white bg-primary mb-3" style="max-width: 18rem;">
                   <div class="card-header">@category.Name</div>
                   <div class="card-body">
                         <i class="@category.CategoryIcon" aria-hidden="true"></i>
+                        <hr />
+                        Sum: @category.ActivitiesSum
                   </div>
                 </div>
             </div>
@@ -39,7 +41,9 @@ else
         var result = await Http.PostAsJsonAsync<ActivityDTO>("/api/Activities", activity);
         if (result.IsSuccessStatusCode)
         {
+            categories.First(x => x.Id == activity.CategoryId).ActivitiesSum += activity.Value;
             Modal?.Close();
+            StateHasChanged();
         }
     }
 }

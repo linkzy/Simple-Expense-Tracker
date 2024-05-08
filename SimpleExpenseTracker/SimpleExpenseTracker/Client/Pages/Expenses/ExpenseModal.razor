@@ -19,6 +19,8 @@
                     <InputText id="Description" @bind-Value="newActivityDTO.Description" class="form-control" placeholder="Name" />
                     <ValidationMessage For="@(() => newActivityDTO.Description)"></ValidationMessage>
 
+                    <InputDate id="Date" @bind-Value=newActivityDTO.ActivityDate class="form-control"></InputDate>
+
                     <button type="submit" class="btn btn-primary">Save changes</button>
                 </EditForm>
             </div>
@@ -37,16 +39,17 @@
 
 
 @code {
+    public CategoryDTO Category { get; set; }
 
     [Parameter]
     public EventCallback<ActivityDTO> onClickAddActivity { get; set; }
-    public ActivityDTO newActivityDTO = new ActivityDTO();
+    public ActivityDTO newActivityDTO = new ActivityDTO() { ActivityDate = DateTime.Now };
 
     private EditForm? Form { get; set; }
 
     public async Task HandleNewActivity()
     {
-        //newActivityDTO.CategoryId = Category.Id;
+        newActivityDTO.CategoryId = Category.Id;
         await onClickAddActivity.InvokeAsync(newActivityDTO);
         newActivityDTO = new ActivityDTO();
     }
@@ -56,8 +59,9 @@
     public string ModalClass = "";
     public bool ShowBackdrop = false;
 
-    public void Open()
-    {       
+    public void Open(CategoryDTO category)
+    {
+        Category = category;
         ModalDisplay = "block;";
         ModalClass = "Show";
         ShowBackdrop = true;

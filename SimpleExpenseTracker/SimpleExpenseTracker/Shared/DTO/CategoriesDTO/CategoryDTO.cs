@@ -29,13 +29,20 @@ namespace SimpleExpenseTracker.Shared.DTO.CategoriesDTO
         public string CategoryIcon { get; set; } = string.Empty;
 
         public int AccountId { get; set; }
+
+        //Stats
+        public int Month { get; set; }
+        public int Year { get; set; }
+
+        public decimal ActivitiesSum { get; set; }
+
         
         public CategoryDTO()
         {
 
         }
 
-        public CategoryDTO(Category category)
+        public CategoryDTO(Category category, int? month, int? year)
         {
             Id = category.Id;
             Name = category.Name;
@@ -44,6 +51,10 @@ namespace SimpleExpenseTracker.Shared.DTO.CategoriesDTO
             AccountId = category.AccountId;
             CategoryIcon = category.CategoryIcon;
             CategoryType = (CategoryTypeDTO)category.CategoryType;
+
+            Month = (int)month;
+            Year = (int)year;
+            ActivitiesSum = category.GetActivitiesSum(Month, Year);
         }
 
     }

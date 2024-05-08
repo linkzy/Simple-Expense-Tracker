@@ -32,22 +32,28 @@ namespace SimpleExpenseTracker.Server.Controllers
             if (category == null)
                 return NotFound();
 
-            return Ok(new CategoryDTO(category));
+            return Ok(new CategoryDTO(category, null, null));
         }
 
         // GET: api/Categories
         [HttpGet]
-        public ActionResult<IEnumerable<CategoryDTO>> GetCategories()
+        public ActionResult<IEnumerable<CategoryDTO>> GetCategories(int? month, int? year)
         {
+            if (month == null)
+                month = DateTime.Now.Month;
+            if(year == null)
+                year = DateTime.Now.Year;
+
             var user = _context
                             .Users
                             .Include(x => x.UserAccount.Categories)
+                            .ThenInclude(x => x.Activities)
                             .FirstOrDefault(x => x.UserId == new Guid(User.FindFirstValue("UserId")));
 
             if (user?.UserAccount?.Categories == null)
                 return NotFound();
 
-            return Ok(user.UserAccount.Categories.Where(x => !x.IsDeleted).Select(x => new CategoryDTO(x)).ToList());
+            return Ok(user.UserAccount.Categories.Where(x => !x.IsDeleted).Select(x => new CategoryDTO(x, month, year)).ToList());
         }        
 
         // POST: api/Categories/
@@ -78,7 +84,7 @@ namespace SimpleExpenseTracker.Server.Controllers
             _context.Categories.Add(newCategory);
             _context.SaveChanges();
 
-            return CreatedAtAction("GetCategory", new { id = newCategory.Id }, new CategoryDTO(newCategory));
+            return CreatedAtAction("GetCategory", new { id = newCategory.Id }, new CategoryDTO(newCategory, null, null));
         }
 
         // PUT: api/Categories/5
