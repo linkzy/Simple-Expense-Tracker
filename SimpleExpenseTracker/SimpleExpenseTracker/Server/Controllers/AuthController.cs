@@ -38,8 +38,18 @@ namespace SimpleExpenseTracker.Server.Controllers
                 Name = request.Name,
                 PasswordHash = PasswordHelper.GenerateSaltedHash(password, salt),
                 Salt = salt,
-                UserAccount = new Account(),
-                UserId = Guid.NewGuid()
+                UserAccount = new Account() { 
+                    Categories = new List<Category> { 
+                        new Category {
+                            Name = "Uncategorized",
+                            Budget = 0,
+                            BudgetType = BudgetType.NoBudget,
+                            CategoryIcon = "fa-solid fa-money-bill",
+                            CategoryType = CategoryType.Uncategorized,
+                            Activities = new List<Activity>(),
+                            CreationDate = DateTime.Now,
+                        } } },
+                UserId = Guid.NewGuid(),
             };
 
             _context.Users.Add(newUser);

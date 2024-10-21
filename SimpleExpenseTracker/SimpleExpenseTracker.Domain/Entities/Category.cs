@@ -93,7 +93,8 @@ namespace SimpleExpenseTracker.Domain
     public enum CategoryType
     {
         Expense = 1,
-        Income = 2
+        Income = 2,
+        Uncategorized = 3,
     }
 
     public enum BudgetType

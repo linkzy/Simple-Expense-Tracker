@@ -31,8 +31,8 @@ namespace SimpleExpenseTracker.Shared.DTO.CategoriesDTO
         public int AccountId { get; set; }
 
         //Stats
-        public int Month { get; set; }
-        public int Year { get; set; }
+        public int? Month { get; set; }
+        public int? Year { get; set; }
 
         public decimal ActivitiesSum { get; set; }
 
@@ -54,7 +54,7 @@ namespace SimpleExpenseTracker.Shared.DTO.CategoriesDTO
 
             Month = (int)month;
             Year = (int)year;
-            ActivitiesSum = category.GetActivitiesSum(Month, Year);
+            ActivitiesSum = category.GetActivitiesSum((int)Month, (int)Year);
         }
 
     }
