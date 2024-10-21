@@ -17,7 +17,7 @@ COPY ["SimpleExpenseTracker/SimpleExpenseTracker.Infra/SimpleExpenseTracker.Infr
 COPY ["SimpleExpenseTracker/SimpleExpenseTracker.Shared/SimpleExpenseTracker.Shared.csproj", "SimpleExpenseTracker/Shared/"]
 
 # Restore the dependencies
-RUN dotnet restore "SimpleExpenseTracker/Server/SimpleExpenseTracker.Server.csproj"
+RUN dotnet restore "./SimpleExpenseTracker/Server/./SimpleExpenseTracker.Server.csproj"
 
 # Copy the rest of the application files
 COPY . .
