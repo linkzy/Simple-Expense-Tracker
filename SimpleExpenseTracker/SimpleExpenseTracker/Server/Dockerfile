@@ -8,11 +8,11 @@ EXPOSE 443
 FROM mcr.microsoft.com/dotnet/sdk:6.0 AS build
 ARG BUILD_CONFIGURATION=Release
 WORKDIR /src
-COPY ["SimpleExpenseTracker/Server/SimpleExpenseTracker.Server.csproj", "SimpleExpenseTracker/Server/"]
-COPY ["SimpleExpenseTracker.Domain/SimpleExpenseTracker.Domain.csproj", "SimpleExpenseTracker.Domain/"]
-COPY ["SimpleExpenseTracker.Infra/SimpleExpenseTracker.Infra.csproj", "SimpleExpenseTracker.Infra/"]
-COPY ["SimpleExpenseTracker/Client/SimpleExpenseTracker.Client.csproj", "SimpleExpenseTracker/Client/"]
-COPY ["SimpleExpenseTracker/Shared/SimpleExpenseTracker.Shared.csproj", "SimpleExpenseTracker/Shared/"]
+COPY ["SimpleExpenseTracker/SimpleExpenseTracker/Server/SimpleExpenseTracker.Server.csproj", "SimpleExpenseTracker/Server/"]
+COPY ["SimpleExpenseTracker/SimpleExpenseTracker.Domain/SimpleExpenseTracker.Domain.csproj", "SimpleExpenseTracker.Domain/"]
+COPY ["SimpleExpenseTracker/SimpleExpenseTracker.Infra/SimpleExpenseTracker.Infra.csproj", "SimpleExpenseTracker.Infra/"]
+COPY ["SimpleExpenseTracker/SimpleExpenseTracker/Client/SimpleExpenseTracker.Client.csproj", "SimpleExpenseTracker/Client/"]
+COPY ["SimpleExpenseTracker/SimpleExpenseTracker/Shared/SimpleExpenseTracker.Shared.csproj", "SimpleExpenseTracker/Shared/"]
 RUN dotnet restore "./SimpleExpenseTracker/Server/./SimpleExpenseTracker.Server.csproj"
 COPY . .
 WORKDIR "/src/SimpleExpenseTracker/Server"
