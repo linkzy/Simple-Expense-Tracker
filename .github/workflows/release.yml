@@ -27,6 +27,6 @@ jobs:
       uses: docker/build-push-action@v2
       with:
         context: .
-        file: ./SimpleExpenseTracker/Server
+        file: ./SimpleExpenseTracker/SimpleExpenseTracker/Server
         push: true
         tags: linkzy/simple-expense-tracker:latest
