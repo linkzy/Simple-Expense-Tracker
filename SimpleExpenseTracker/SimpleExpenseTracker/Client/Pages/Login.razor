@@ -27,6 +27,12 @@
 @code {
     private UserLoginDTO user = new UserLoginDTO();
 
+    protected override async Task OnInitializedAsync()
+    {
+        await LocalStorage.RemoveItemAsync("token");
+
+    }
+
     public async Task HandleLogin()
     {
         var result = await Http.PostAsJsonAsync("api/Auth/login", user);

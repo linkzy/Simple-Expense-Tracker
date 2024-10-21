@@ -96,5 +96,4 @@ using (var scope = scopeFactory.CreateScope())
         db.Database.Migrate();
     }
 }
-
 app.Run();
