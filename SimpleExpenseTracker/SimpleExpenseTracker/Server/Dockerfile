@@ -11,7 +11,6 @@ WORKDIR /src
 COPY ["SimpleExpenseTracker/SimpleExpenseTracker/Server/SimpleExpenseTracker.Server.csproj", "SimpleExpenseTracker/Server/"]
 COPY ["SimpleExpenseTracker/SimpleExpenseTracker.Domain/SimpleExpenseTracker.Domain.csproj", "SimpleExpenseTracker.Domain/"]
 COPY ["SimpleExpenseTracker/SimpleExpenseTracker.Infra/SimpleExpenseTracker.Infra.csproj", "SimpleExpenseTracker.Infra/"]
-COPY ["SimpleExpenseTracker/SimpleExpenseTracker/Client/SimpleExpenseTracker.Client.csproj", "SimpleExpenseTracker/Client/"]
 COPY ["SimpleExpenseTracker/SimpleExpenseTracker/Shared/SimpleExpenseTracker.Shared.csproj", "SimpleExpenseTracker/Shared/"]
 RUN dotnet restore "./SimpleExpenseTracker/Server/./SimpleExpenseTracker.Server.csproj"
 COPY . .
